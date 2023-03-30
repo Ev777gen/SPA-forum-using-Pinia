@@ -4,7 +4,7 @@
       <li
         v-for="(breadcrumb, idx) in breadcrumbs"
         :key="breadcrumb.name"
-        @click="changeRoute(breadcrumb, idx)"
+        @click="changeRoute(breadcrumb)"
         :class="{'clickable': idx < breadcrumbs.length - 1}"
       >
         {{ breadcrumb.nameToDisplay }}
@@ -25,14 +25,11 @@ export default {
     '$route'() {
       this.updateBreadcrumbs(this.$route);
     },
-    /*'breadcrumbs.length'(newValue) {
+    'breadcrumbs.length'(newValue) {
       if (newValue === 0) {
         this.initialiseBreadcrumbs; 
       }
-    }*/
-  },
-  mounted () { 
-    this.initialiseBreadcrumbs();
+    }
   },
   methods: {
     ...mapActions(useBreadcrumbsStore, ['changeRoute', 'initialiseBreadcrumbs', 'updateBreadcrumbs']),

@@ -3,6 +3,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 // Importing Firebase
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
@@ -27,10 +28,14 @@ export const db = getFirestore(firebaseApp);
 export const auth = getAuth(firebaseApp);
 export const storage = getStorage(firebaseApp);
 
+// Initializing Pinia
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+
 // Creating Vue app
 const app = createApp(App)
   .use(router)
-  .use(createPinia())
+  .use(pinia)
   .use(FontAwesome)
   .use(VPagination)
   .use(VeeValidatePlugin)

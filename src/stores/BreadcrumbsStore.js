@@ -9,7 +9,7 @@ export const useBreadcrumbsStore = defineStore('BreadcrumbsStore', {
   },
   actions: {
     updateBreadcrumbs(route) {
-      //if (!route) return;
+      if (!route) return;
       if (route.meta.breadcrumb) {
         const lastIndex = this.breadcrumbs.length - 1;
         const currentIndex = this.breadcrumbs.findIndex(breadcrumb => breadcrumb.name === route.name);
@@ -20,15 +20,15 @@ export const useBreadcrumbsStore = defineStore('BreadcrumbsStore', {
         if (!isPageAdded && !isHomePage) {
           this.addBreadcrumb(route);
         } else if (isPageAdded && hasSameNameAsLast) {
-          this.replaceLastBreadcrumb();
+          this.replaceLastBreadcrumbWith(route);
         } else {
           this.deleteNextBreadcrumbs(currentIndex);
         }
-      } /*else {
+      } else {
         this.initialiseBreadcrumbs();
-      }*/
+      }
     },
-    changeRoute (breadcrumb, idx) {
+    changeRoute (breadcrumb) {
       router.push({ 
         name: breadcrumb.name,
         params: breadcrumb.params,
@@ -49,17 +49,17 @@ export const useBreadcrumbsStore = defineStore('BreadcrumbsStore', {
     deleteNextBreadcrumbs(idx) {
       this.breadcrumbs.splice(idx + 1);
     },
-    replaceLastBreadcrumb() {
+    replaceLastBreadcrumbWith(route) {
       this.breadcrumbs.pop();
-      this.addBreadcrumb();
+      this.addBreadcrumb(route);
     },
     initialiseBreadcrumbs() {
       if (this.breadcrumbs.length > 0) {
-        this.deleteNextBreadcrumbs(1);
+        this.deleteNextBreadcrumbs(0);
       } else {
         this.breadcrumbs.push({ name: 'HomeView', nameToDisplay: 'Главная' });
       }
     }
   },
-  //persist: true,
+  persist: true,
 });
