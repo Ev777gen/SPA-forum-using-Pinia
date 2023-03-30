@@ -7,16 +7,13 @@
 
 <script>
 import CategoryList from '@/components/forum/CategoryList';
-import { mapActions } from 'vuex';
+import { mapState, mapActions } from 'pinia';
+import { useForumStore } from '@/stores/ForumStore';
+
 export default {
   components: { CategoryList },
   computed: {
-    categories() {
-      return this.$store.state.categories;
-    },
-    isAsyncDataLoaded() {
-      return this.$store.state.isLoaded;
-    },
+    ...mapState(useForumStore, ['categories', 'isAsyncDataLoaded']),
   },
   async created () {
     this.startLoadingIndicator();
@@ -26,7 +23,7 @@ export default {
     this.stopLoadingIndicator();
   },
   methods: {
-    ...mapActions(['fetchAllCategories', 'fetchForums', 'startLoadingIndicator', 'stopLoadingIndicator'])
+    ...mapActions(useForumStore, ['fetchAllCategories', 'fetchForums', 'startLoadingIndicator', 'stopLoadingIndicator'])
   }
 }
 </script>

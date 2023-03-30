@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isReadyToDisplay" class="profile">
+  <div v-if="isAsyncDataLoaded" class="profile">
     <div class="profile__card">
       <UserProfileCard v-if="!edit" :user="userToDisplay"/>
       <UserProfileCardEditor v-else :user="userToDisplay"/>
@@ -8,9 +8,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
 import UserProfileCard from "@/components/user/UserProfileCard.vue";
 import UserProfileCardEditor from "@/components/user/UserProfileCardEditor.vue";
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
+import { mapActions, mapState } from 'pinia';
+
 export default {
   components: { UserProfileCard, UserProfileCardEditor },
   props: {
@@ -24,19 +27,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ authUser: 'authUser' }),
+    ...mapState(useAuthStore, ['authUser']),
+    ...mapState(useForumStore, ['user', 'isAsyncDataLoaded']),
     otherUser() {
       if (this.userId) {
-        return this.$store.getters.user(this.userId);
+        return this.user(this.userId);
       } else {
         return null;
       }
     },
     userToDisplay() {
       return this.otherUser || this.authUser;
-    },
-    isReadyToDisplay() {
-      return this.$store.state.isLoaded;
     },
   },
   watch: {
@@ -54,7 +55,7 @@ export default {
     } 
   },
   methods: {
-    ...mapActions(['fetchUser', 'startLoadingIndicator', 'stopLoadingIndicator']),
+    ...mapActions(useForumStore, ['fetchUser', 'startLoadingIndicator', 'stopLoadingIndicator'])
   }
 }
 </script>

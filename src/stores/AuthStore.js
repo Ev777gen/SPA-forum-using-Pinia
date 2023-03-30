@@ -1,64 +1,68 @@
+import { defineStore } from 'pinia';
 import { auth, storage } from "@/main.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateEmail, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-export default {
-  state: {
-    authId: null,
-    authUserUnsubscribe: null,
-    authObserverUnsubscribe: null
+import { useForumStore } from './ForumStore';
+
+export const useAuthStore = defineStore('AuthStore', {
+  state: () => {
+    return {
+      authId: null,
+      authUserUnsubscribe: null,
+      authObserverUnsubscribe: null
+    }
   },
   getters: {
-    authUser: (state, getters) => {
-      return getters.user(state.authId);
+    authUser: (state) => {
+      const forum = useForumStore();
+      return forum.user(state.authId);
     }
   },
   actions: {
-    async registerUserWithEmailAndPassword({ dispatch }, { name, username, email, password }) {
+    async registerUserWithEmailAndPassword({ name, username, email, password }) {
+      const { createUser } = useForumStore();
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      await dispatch('createUser', { id: result.user.uid, name, username, email }, { root: true });
+      await createUser({ id: result.user.uid, name, username, email });                   // Здесь await лишний!
     },
-    signInWithEmailAndPassword(context, { email, password }) {
+    signInWithEmailAndPassword({ email, password }) {
       return signInWithEmailAndPassword(auth, email, password);
     },
-    async signOut({ commit }) {
+    async signOut() {
       await auth.signOut();
-      commit('setAuthId', null);
+      this.authId = null;
     },
-    async fetchAuthUser({ dispatch, commit }) {
+    async fetchAuthUser() {
+      const { fetchItem } = useForumStore();
       const userId = auth.currentUser?.uid;
       if (!userId) return;
-      await dispatch(
-        'fetchItem',
-        {
+      await fetchItem({
           resource: 'users',
           id: userId,
           handleUnsubscribe: (unsubscribe) => {
-            commit('setAuthUserUnsubscribe', unsubscribe);
+            this.authUserUnsubscribe = unsubscribe;
           }
-        },
-        { root: true }
-      )
-      commit('setAuthId', userId)
+        });
+      this.authId = userId;
     },
-    initAuthentication({ dispatch, commit, state }) {
-      if (state.authObserverUnsubscribe) state.authObserverUnsubscribe();
+    initAuthentication() {
+      if (this.authObserverUnsubscribe) this.authObserverUnsubscribe();
       return new Promise(resolve => {
         const unsubscribe = auth.onAuthStateChanged(async user => {
-          dispatch('unsubscribeAuthUserSnapshot');
+          this.unsubscribeAuthUserSnapshot();
           if (user) {
-            await dispatch('fetchAuthUser');
+            await this.fetchAuthUser();
             resolve(user);
           } else {
             resolve(null);
           }
         })
-        commit('setAuthObserverUnsubscribe', unsubscribe);
+        this.authObserverUnsubscribe = unsubscribe;
       })
     },
-    async uploadAvatar({ state }, { file, filename }) {
+    async uploadAvatar({ file, filename }) {
       if (!file) return null;
-      const authId = state.authId;
+      const authId = this.authId;
       filename = filename || file.name;
       try {
         const storageRef = ref(
@@ -73,13 +77,13 @@ export default {
       }
     },
     // Методы для смены e-mail
-    async updateEmail(context, { email }) {
+    async updateEmail({ email }) {
       return updateEmail(auth.currentUser, email);
     },
-    async updatePassword(context, { password }) {
+    async updatePassword({ password }) {
       return updatePassword(auth.currentUser, password);
     },
-    async reauthenticate(context, { email, password }) {
+    async reauthenticate({ email, password }) {
       try {
         const credential = EmailAuthProvider.credential(email, password);
         const user = auth.currentUser;
@@ -89,22 +93,11 @@ export default {
       }
     },
     // Отписываемся от слушателей
-    async unsubscribeAuthUserSnapshot({ state, commit }) {
-      if (state.authUserUnsubscribe) {
-        state.authUserUnsubscribe();
-        commit('setAuthUserUnsubscribe', null);
+    async unsubscribeAuthUserSnapshot() {
+      if (this.authUserUnsubscribe) {
+        this.authUserUnsubscribe();
+        this.authUserUnsubscribe = null;
       }
     }
-  },
-  mutations: {
-    setAuthId(state, id) {
-      state.authId = id;
-    },
-    setAuthUserUnsubscribe(state, unsubscribe) {
-      state.authUserUnsubscribe = unsubscribe;
-    },
-    setAuthObserverUnsubscribe(state, unsubscribe) {
-      state.authObserverUnsubscribe = unsubscribe;
-    }
   }
-}
+});

@@ -34,7 +34,7 @@
           </p>
         </div>
         <a
-          v-if="post.userId === $store.state.auth.authId"
+          v-if="post.userId === authId"
           @click.prevent="toggleEditMode(post.id)"
           href="#"
           class="post__edit-icon"
@@ -54,8 +54,10 @@
 
 <script>
 import PostEditor from '@/components/forum/PostEditor';
-import { mapActions } from 'vuex';
 import { localeDate, userPostsCountWording, userThreadsCountWording } from '@/helpers';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
+import { mapState, mapActions } from 'pinia';
 
 export default {
   components: { PostEditor },
@@ -71,17 +73,16 @@ export default {
     }
   },
   computed: {
-    users() {
-      return this.$store.state.users;
-    }
+    ...mapState(useAuthStore, ['authId']),
+    ...mapState(useForumStore, ['users', 'user']),
   },
   methods: {
-    ...mapActions(['updatePost']),
+    ...mapActions(useForumStore, ['updatePost']),
     localeDate,
     userPostsCountWording,
     userThreadsCountWording,
     getUserById(userId) {
-      return this.$store.getters.user(userId);
+      return this.user(userId);
     },
     toggleEditMode(id) {
       this.editing = id === this.editing ? null : id;

@@ -44,7 +44,10 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
+import { mapActions, mapState } from 'pinia';
+
 export default {
   data() {
     return {
@@ -56,7 +59,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({ activeUser: 'authUser' }),
+    ...mapState(useAuthStore, { activeUser: 'authUser' }),
     isChanging() {
       return (this.isChangingEmail && !this.isChangingPassword) || (!this.isChangingEmail && this.isChangingPassword)
     }
@@ -69,7 +72,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['reauthenticate', 'updateEmail', 'updateUser', 'startLoadingIndicator', 'stopLoadingIndicator']),
+    ...mapActions(useAuthStore, ['reauthenticate', 'updateEmail']),
+    ...mapActions(useForumStore, ['updateUser', 'startLoadingIndicator', 'stopLoadingIndicator']),
     async changeEmail() {
       try {
         this.startLoadingIndicator();

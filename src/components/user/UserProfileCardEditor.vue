@@ -44,7 +44,10 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions } from 'pinia';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
+
 export default {
   props: {
     user: {
@@ -60,7 +63,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['uploadAvatar', 'updateUser']),
+    ...mapActions(useAuthStore, ['uploadAvatar']),
+    ...mapActions(useForumStore, ['updateUser']),
     changeAvatar (e) {
       this.avatar = e.target.files[0];
       const reader = new FileReader();

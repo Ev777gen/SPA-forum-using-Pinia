@@ -35,20 +35,26 @@
         <span>{{ user.threadsCount }}</span>
       </div>
     </div>
-    <div v-if="user.id === this.$store.state.auth.authId" class="card__button">
+    <div v-if="user.id === authId" class="card__button">
       <router-link :to="{name: 'ProfileEdit'}" class="btn btn_orange">Редактировать профиль</router-link>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'pinia';
+import { useAuthStore } from '@/stores/AuthStore';
 import { localeDate } from '@/helpers';
+
 export default {
   props: {
     user: {
       type: Object,
       required: true
     }
+  },
+  computed: {
+    ...mapState(useAuthStore, ['authId']),
   },
   methods: {
     localeDate,
