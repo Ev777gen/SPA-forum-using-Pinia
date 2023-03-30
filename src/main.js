@@ -2,7 +2,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import store from './store';
+import { createPinia } from 'pinia';
 // Importing Firebase
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
@@ -29,8 +29,8 @@ export const storage = getStorage(firebaseApp);
 
 // Creating Vue app
 const app = createApp(App)
-  .use(store)
   .use(router)
+  .use(createPinia())
   .use(FontAwesome)
   .use(VPagination)
   .use(VeeValidatePlugin)

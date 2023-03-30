@@ -10,6 +10,9 @@
 
 <script>
 import ForumList from '@/components/forum/ForumList';
+import { useForumStore } from '@/stores/ForumStore';
+import { mapState } from 'pinia';
+
 export default {
   components: { ForumList },
   props: {
@@ -18,9 +21,12 @@ export default {
       required: true
     }
   },
+  computed: {
+    ...mapState(useForumStore, ['forums']),
+  },
   methods: {
     getForumsForCategory (category) {
-      return this.$store.state.forums.filter(forum => forum.categoryId === category.id);
+      return this.forums.filter(forum => forum.categoryId === category.id);
     }
   }
 }

@@ -17,8 +17,9 @@
 
 <script>
 import ThreadEditor from '@/components/forum/ThreadEditor';
+import { mapState, mapActions } from 'pinia';
+import { useForumStore } from '@/stores/ForumStore';
 import { findItemById } from '@/helpers';
-import { mapActions } from 'vuex';
 
 export default {
   components: { ThreadEditor },
@@ -31,15 +32,13 @@ export default {
     }
   },
   computed: {
+    ...mapState(useForumStore, ['threads', 'posts', 'isAsyncDataLoaded']),
     thread () {
-      return findItemById(this.$store.state.threads, this.id);
+      return findItemById(this.threads, this.id);
     },
     text () {
-      const post = findItemById(this.$store.state.posts, this.thread?.postIds[0]);
+      const post = findItemById(this.posts, this.thread?.postIds[0]);
       return post ? post.text : '';
-    },
-    isAsyncDataLoaded() {
-      return this.$store.state.isLoaded;
     },
   },
   async created () {
@@ -49,7 +48,7 @@ export default {
     this.stopLoadingIndicator();
   },
   methods: {
-    ...mapActions(['fetchThread', 'updateThread', 'fetchPost', 'startLoadingIndicator', 'stopLoadingIndicator']),
+    ...mapActions(useForumStore, ['fetchThread', 'updateThread', 'fetchPost', 'startLoadingIndicator', 'stopLoadingIndicator']),
     async save ({ title, text }) {
       const thread = await this.updateThread({
         id: this.id,

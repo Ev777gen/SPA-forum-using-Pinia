@@ -33,6 +33,9 @@
 
 <script>
 import { localeDate, findItemById, repliesCountWording } from '@/helpers';
+import { mapState } from 'pinia';
+import { useForumStore } from '@/stores/ForumStore';
+
 export default {
   props: {
     threads: {
@@ -41,12 +44,7 @@ export default {
     }
   },
   computed: {
-    posts () {
-      return this.$store.state.posts;
-    },
-    users () {
-      return this.$store.state.users;
-    },
+    ...mapState(useForumStore, ['posts', 'users']),
   },
   methods: {
     localeDate,

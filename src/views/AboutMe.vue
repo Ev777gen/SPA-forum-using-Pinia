@@ -5,7 +5,7 @@
     <!--<h1 class="about__title title">Давайте знакомиться!</h1>
     <h2 class="about__subtitle subtitle">Меня зовут Евгений</h2>-->
 
-    <h2 class="about__title subtitle">Привет! Меня зовут Женя</h2>
+    <h2 class="about__title subtitle">Привет! Меня зовут Женя!</h2>
 
     <!---->
 

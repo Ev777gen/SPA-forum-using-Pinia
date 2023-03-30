@@ -18,7 +18,11 @@
     
   </div>
 </template>
+
 <script>
+import { mapState, mapActions } from 'pinia';
+import { useAuthStore } from '@/stores/AuthStore';
+
 export default {
   data () {
     return {
@@ -29,9 +33,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions(useAuthStore, ['signInWithEmailAndPassword']),
     async signIn () {
       try {
-        await this.$store.dispatch('signInWithEmailAndPassword', { ...this.form });
+        await this.signInWithEmailAndPassword({ ...this.form });
         this.successRedirect();
       } catch (error) {
         alert(error.message);

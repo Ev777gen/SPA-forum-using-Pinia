@@ -9,8 +9,10 @@
 </template>
 <script>
 import ThreadEditor from '@/components/forum/ThreadEditor';
+import { mapState, mapActions } from 'pinia';
+import { useForumStore } from '@/stores/ForumStore';
 import { findItemById } from '@/helpers';
-import { mapActions } from 'vuex';
+
 export default {
   components: { ThreadEditor },
   props: {
@@ -25,11 +27,9 @@ export default {
     }
   },
   computed: {
+    ...mapState(useForumStore, ['forums', 'isAsyncDataLoaded']),
     forum () {
-      return findItemById(this.$store.state.forums, this.forumId);
-    },
-    isAsyncDataLoaded() {
-      return this.$store.state.isLoaded;
+      return findItemById(this.forums, this.forumId);
     },
   },
   async created () {
@@ -38,7 +38,7 @@ export default {
     this.stopLoadingIndicator();
   },
   methods: {
-    ...mapActions(['fetchForum', 'createThread', 'startLoadingIndicator', 'stopLoadingIndicator']),
+    ...mapActions(useForumStore, ['fetchForum', 'createThread', 'startLoadingIndicator', 'stopLoadingIndicator']),
     async save ({ title, text }) {
       const thread = await this.createThread({
         title,

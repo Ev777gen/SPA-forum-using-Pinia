@@ -40,7 +40,7 @@
         </nav>
         <router-link :to="{name: 'ProfileView'}" class="dropdown__link">Мой профиль</router-link>
         <router-link :to="{name: 'SettingsView'}" class="dropdown__link">Настройки</router-link>
-        <a href="" class="dropdown__link" @click.prevent="signOut">Выйти <font-awesome-icon icon="fa-solid fa-right-from-bracket" /></a>
+        <a href="" class="dropdown__link" @click.prevent="onSignOut">Выйти <font-awesome-icon icon="fa-solid fa-right-from-bracket" /></a>
       </div>
       
     </div>
@@ -48,7 +48,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapState } from 'pinia';
+import { useAuthStore } from '@/stores/AuthStore';
 import vClickOutside from 'click-outside-vue3';
 
 export default {
@@ -62,7 +63,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['authUser'])
+    ...mapState(useAuthStore, ['authUser'])
   },
   created () {
     this.$router.beforeEach(() => {
@@ -75,8 +76,9 @@ export default {
     }
   },
   methods: {
-    signOut () {
-      this.$store.dispatch('signOut');
+    ...mapActions(useAuthStore, ['signOut']),
+    onSignOut () {
+      this.signOut();
       this.isDropdownOpen = false;
     },
     onClickOutside () {

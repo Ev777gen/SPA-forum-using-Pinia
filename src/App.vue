@@ -10,8 +10,8 @@
       </aside>
       <main class="app__content">
         <TheBreadcrumbs />
-        <router-view v-show="isLoaded" :key="`${$route.path}${JSON.stringify($route.query)}`" />
-        <AppSpinner v-show="!isLoaded" class="app__spinner" />
+        <router-view v-show="isAsyncDataLoaded" :key="`${$route.path}${JSON.stringify($route.query)}`" />
+        <AppSpinner v-show="!isAsyncDataLoaded" class="app__spinner" />
       </main>
     </div>
   </div>
@@ -22,16 +22,16 @@
 import TheNavbar from '@/components/layout/TheNavbar';
 import TheSidebar from '@/components/layout/TheSidebar';
 import TheBreadcrumbs from '@/components/layout/TheBreadcrumbs';
-import { mapActions } from 'vuex';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
+import { mapState, mapActions } from 'pinia';
 import NProgress from 'nprogress';
 
 export default {
   name: 'App',
   components: { TheNavbar, TheSidebar, TheBreadcrumbs },
   computed: {
-    isLoaded() {
-      return this.$store.state.isLoaded;
-    }
+    ...mapState(useForumStore, ['isAsyncDataLoaded'])
   },
   created () {
     this.fetchAuthUser();
@@ -47,7 +47,7 @@ export default {
     });
   },
   methods: {
-    ...mapActions(['fetchAuthUser']),
+    ...mapActions(useAuthStore, ['fetchAuthUser']),
   }
 }
 </script>

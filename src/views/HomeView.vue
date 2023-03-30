@@ -38,14 +38,18 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapState, mapActions } from 'pinia';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
+
 export default {
   name: 'HomeView',
   computed: {
-    ...mapGetters(['authUser'])
+    ...mapState(useAuthStore, ['authUser'])
   },
   methods: {
-    ...mapActions(['signInWithEmailAndPassword', 'startLoadingIndicator', 'stopLoadingIndicator', 'fetchUser']),
+    ...mapActions(useAuthStore, ['signInWithEmailAndPassword']),
+    ...mapActions(useForumStore, ['startLoadingIndicator', 'stopLoadingIndicator', 'fetchUser']),
     async logInToCheckOutThisSite() {
       try {
         this.startLoadingIndicator();

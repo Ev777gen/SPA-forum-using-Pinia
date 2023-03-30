@@ -16,7 +16,11 @@
 
   </div>
 </template>
+
 <script>
+import { mapActions } from 'pinia';
+import { useAuthStore } from '@/stores/AuthStore';
+
 export default {
   data () {
     return {
@@ -29,9 +33,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions(useAuthStore, ['registerUserWithEmailAndPassword']),
     async register () {
       try {
-        await this.$store.dispatch('registerUserWithEmailAndPassword', this.form);
+        await this.registerUserWithEmailAndPassword(this.form);
         this.$router.push('/');
       } catch (error) {
         alert(error.message);

@@ -39,7 +39,9 @@
 <script>
 import PostList from '@/components/forum/PostList';
 import PostEditor from '@/components/forum/PostEditor';
-import { mapActions, mapGetters } from 'vuex';
+import { mapState, mapActions } from 'pinia';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
 import { localeDate, repliesCountWording } from '@/helpers';
 
 export default {
@@ -52,22 +54,16 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['authUser']),
-    threads() {
-      return this.$store.state.threads;
-    },
-    posts() {
-      return this.$store.state.posts;
-    },
-    thread() {
-      return this.$store.getters.thread(this.id);
-    },
-    threadPosts() {
-      return this.posts.filter(post => post.threadId === this.id);
-    },
-    isAsyncDataLoaded() {
-      return this.$store.state.isLoaded;
-    },
+    ...mapState(useAuthStore, ['authUser']),
+    ...mapState(useForumStore, {
+      isAsyncDataLoaded: 'isAsyncDataLoaded',
+      thread(state) {
+        return state.thread(this.id);
+      },
+      threadPosts(state) {
+        return state.posts.filter(post => post.threadId === this.id);
+      },
+    })
   },
   async created () {
     this.startLoadingIndicator();
@@ -76,7 +72,7 @@ export default {
     this.stopLoadingIndicator();
   },
   methods: {
-    ...mapActions(['fetchThread', 'fetchUsers', 'fetchPosts', 'createPost', 'startLoadingIndicator', 'stopLoadingIndicator']),
+    ...mapActions(useForumStore, ['fetchThread', 'fetchUsers', 'fetchPosts', 'createPost', 'startLoadingIndicator', 'stopLoadingIndicator']),
     localeDate,
     repliesCountWording,
     addPost (eventData) {

@@ -15,7 +15,7 @@
     </div>
 
     <div class="forum__thread-list">
-      <ThreadList :threads="threads"/>
+      <ThreadList :threads="threadsToDisplay"/>
     </div>
     <div v-if="totalPagesCount > 1" class="pagination">
       <v-pagination
@@ -29,8 +29,10 @@
 
 <script>
 import ThreadList from '@/components/forum/ThreadList';
+import { mapState, mapActions } from 'pinia';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
 import { findItemById } from '@/helpers';
-import { mapActions, mapGetters } from 'vuex';
 
 export default {
   components: { ThreadList },
@@ -47,26 +49,26 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['authUser']),
-    forum () {
-      return findItemById(this.$store.state.forums, this.id);
-    },
-    threads () {
-      if (!this.forum) return [];
-      return this.$store.state.threads
-        .filter(thread => thread.forumId === this.forum.id)
-        .map(thread => this.$store.getters.thread(thread.id));
-    },
-    threadsCount () {
-      return this.forum.threadIds?.length || 0;
-    },
-    isAsyncDataLoaded() {
-      return this.$store.state.isLoaded;
-    },
-    totalPagesCount () {
-      if (!this.threadsCount) return 0;
-      return Math.ceil(this.threadsCount / this.threadsPerPage);
-    }
+    ...mapState(useAuthStore, ['authUser']),
+    ...mapState(useForumStore, {
+      isAsyncDataLoaded: 'isAsyncDataLoaded',
+      forum (store) {
+        return findItemById(store.forums, this.id);
+      },
+      threadsToDisplay (store) {
+        if (!this.forum) return [];
+        return store.threads
+          .filter(thread => thread.forumId === this.forum.id)
+          .map(thread => store.thread(thread.id));
+      },
+      threadsCount () {
+        return this.forum.threadIds?.length || 0;
+      },
+      totalPagesCount () {
+        if (!this.threadsCount) return 0;
+        return Math.ceil(this.threadsCount / this.threadsPerPage);
+      }
+    })
   },
   watch: {
     async page (page) {
@@ -74,14 +76,29 @@ export default {
     }
   },
   async created () {
-    this.startLoadingIndicator();
-    const forum = await this.fetchForum({ id: this.id });
-    const threads = await this.fetchThreadsByPage({ ids: forum.threadIds, page: this.page, threadsPerPage: this.threadsPerPage });
-    await this.fetchUsers({ ids: threads.map(thread => thread.userId) });
-    this.stopLoadingIndicator();
+    try {
+      this.startLoadingIndicator();
+      const forum = await this.fetchForum({ id: this.id });
+      const threads = await this.fetchThreadsByPage({ 
+        ids: forum.threadIds, 
+        page: this.page, 
+        threadsPerPage: this.threadsPerPage 
+      });
+      const users = await this.fetchUsers({ ids: threads.map(thread => thread.userId) });
+      this.stopLoadingIndicator();
+    } catch(err) {
+      console.log(err);
+    }
   },
   methods: {
-    ...mapActions(['fetchForum', 'fetchThreads', 'fetchThreadsByPage', 'fetchUsers', 'startLoadingIndicator', 'stopLoadingIndicator']),
+    ...mapActions(useForumStore, [
+      'fetchForum', 
+      'fetchThreads', 
+      'fetchThreadsByPage', 
+      'fetchUsers', 
+      'startLoadingIndicator', 
+      'stopLoadingIndicator'
+    ])
   }
 }
 </script>
