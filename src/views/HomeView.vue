@@ -13,7 +13,7 @@
       <p>А еще приложение адаптировано под мобильные устройства.</p>
     </div>
     <div class="homepage__text">
-      Для проекта я использовал Firebase 9: 
+      Для backend-части проекта я использовал Firebase 9: 
       <ol  class="homepage__list">
         <li>Cloud Firestore - в качестве базы данных;</li>
         <li>Authentication - для авторизации;</li>
@@ -21,7 +21,11 @@
       </ol>
     </div>
     <div class="homepage__text">
-      На GitHub можно посмотреть <a href="https://github.com/Ev777gen/SPA" target="_blank">исходный код</a>.
+      На GitHub можно посмотреть разные варианты исходного кода:
+      <ol class="homepage__list">
+        <li><a href="https://github.com/Ev777gen/SPA" target="_blank">Исходный код</a> (Vue.js 3 Optios API + Vuex);</li>
+        <li><a href="https://github.com/Ev777gen/SPA-forum-using-Pinia" target="_blank">Исходный код</a> (Vue.js 3 Composition API + Pinia).</li>
+      </ol>
     </div>
     <div class="homepage__text">
       Чтобы осмотреться вокруг, можно 
