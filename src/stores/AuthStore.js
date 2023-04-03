@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia';
 import { auth, storage } from "@/main.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateEmail, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  updateEmail, 
+  updatePassword, 
+  EmailAuthProvider, 
+  reauthenticateWithCredential } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import { useForumStore } from './ForumStore';
@@ -23,7 +29,7 @@ export const useAuthStore = defineStore('AuthStore', {
     async registerUserWithEmailAndPassword({ name, username, email, password }) {
       const { createUser } = useForumStore();
       const result = await createUserWithEmailAndPassword(auth, email, password);
-      await createUser({ id: result.user.uid, name, username, email });                   // Здесь await лишний!
+      await createUser({ id: result.user.uid, name, username, email });
     },
     signInWithEmailAndPassword({ email, password }) {
       return signInWithEmailAndPassword(auth, email, password);

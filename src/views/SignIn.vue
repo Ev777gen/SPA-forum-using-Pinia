@@ -19,36 +19,36 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapActions } from 'pinia';
+<script setup>
+import { reactive } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/AuthStore';
 
-export default {
-  data () {
-    return {
-      form: {
-        email: '',
-        password: ''
-      }
-    }
-  },
-  methods: {
-    ...mapActions(useAuthStore, ['signInWithEmailAndPassword']),
-    async signIn () {
-      try {
-        await this.signInWithEmailAndPassword({ ...this.form });
-        this.successRedirect();
-      } catch (error) {
-        alert(error.message);
-      }
-    },
-    successRedirect () {
-      const redirectTo = this.$route.query.redirectTo || { name: 'HomeView' };
-      this.$router.push(redirectTo);
-    }
+const form = reactive({
+  email: '',
+  password: ''
+});
+
+const { signInWithEmailAndPassword } = useAuthStore();
+
+const router = useRouter();
+const route = useRoute();
+
+async function signIn() {
+  try {
+    await signInWithEmailAndPassword({ ...form });
+    successRedirect();
+  } catch (error) {
+    alert(error.message);
   }
 }
+
+function successRedirect() {
+  const redirectTo = route.query.redirectTo || { name: 'HomeView' };
+  router.push(redirectTo);
+}
 </script>
+
 <style lang="scss" scoped>
 .form__btn-group {
   justify-content: space-between;

@@ -43,85 +43,85 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
-import { mapActions, mapState } from 'pinia';
 
-export default {
-  data() {
-    return {
-      isChangingEmail: false,
-      isChangingPassword: false,
-      newEmail: '',
-      password: '',
-      newPassword: '',
-    }
-  },
-  computed: {
-    ...mapState(useAuthStore, { activeUser: 'authUser' }),
-    isChanging() {
-      return (this.isChangingEmail && !this.isChangingPassword) || (!this.isChangingEmail && this.isChangingPassword)
-    }
-  },
-  watch: {
-    activeUser(newValue) {
-      if (newValue === null) {
-        this.$router.push('/');
-      }
-    }
-  },
-  methods: {
-    ...mapActions(useAuthStore, ['reauthenticate', 'updateEmail']),
-    ...mapActions(useForumStore, ['updateUser', 'startLoadingIndicator', 'stopLoadingIndicator']),
-    async changeEmail() {
-      try {
-        this.startLoadingIndicator();
-        await this.reauthenticate({ email: this.activeUser.email, password: this.password });
-        await this.updateEmail({ email: this.newEmail });
-        this.updateUser({ ...this.activeUser, email: this.newEmail });
-        this.clearForm();
-        this.isChangingEmail = false;
-        this.stopLoadingIndicator();
-      } catch (error) {
-        alert('Возникла ошибка при обновлении данных пользователя. Попробуйте повторить еще раз.');
-        this.clearForm();
-        this.isChangingEmail = false;
-        this.stopLoadingIndicator();
-      }
-    },
-    async changePassword() {
-      alert('Я специально не реализовал этот функционал, чтобы избежать случайных проблем.');
-      // try {
-      //   this.startLoadingIndicator();
-      //   await this.reauthenticate({ email: this.activeUser.email, password: this.password });
-      //   await this.updatePassword({ password: this.newPassword });
-      //   this.clearForm();
-      //   this.isChangingPassword = false;
-      //   this.stopLoadingIndicator();
-      // } catch (error) {
-      //   alert('Возникла ошибка при обновлении данных пользователя. Попробуйте повторить еще раз.');
-      //   this.clearForm();
-      //   this.isChangingPassword = false;
-      //   this.stopLoadingIndicator();
-      // }
+const router = useRouter();
 
-      // Если раскомментировать то, что выше,
-      // то следующие две строки надо удалить
-      this.clearForm();
-      this.isChangingPassword = false;
-    },
-    cancel() {
-      this.isChangingEmail = false;
-      this.isChangingPassword = false;
-      this.clearForm();
-    },
-    clearForm() {
-      this.newEmail = '';
-      this.password = '';
-      this.newPassword = '';
-    }
+const isChangingEmail = ref(false);
+const isChangingPassword = ref(false);
+const newEmail = ref('');
+const password = ref('');
+const newPassword = ref('');
+
+const { authUser: activeUser } = storeToRefs(useAuthStore());
+const { reauthenticate, updateEmail } = useAuthStore();
+const { updateUser, startLoadingIndicator, stopLoadingIndicator } = useForumStore();
+
+const isChanging = computed(() => {
+  return (isChangingEmail.value && !isChangingPassword.value) || 
+    (!isChangingEmail.value && isChangingPassword.value);
+});
+
+watch(activeUser, (newValue) => {
+  if (newValue === null) {
+    router.push('/');
   }
+});
+
+async function changeEmail() {
+  try {
+    startLoadingIndicator();
+    await reauthenticate({ email: activeUser.value.email, password: password.value });
+    await updateEmail({ email: newEmail.value });
+    updateUser({ ...activeUser.value, email: newEmail.value });
+    clearForm();
+    isChangingEmail.value = false;
+    stopLoadingIndicator();
+  } catch (error) {
+    alert('Возникла ошибка при обновлении данных пользователя. Попробуйте повторить еще раз.');
+    clearForm();
+    isChangingEmail.value = false;
+    stopLoadingIndicator();
+  }
+}
+
+async function changePassword() {
+  alert('Я специально не реализовал этот функционал, чтобы избежать случайных проблем.');
+  // try {
+  //   startLoadingIndicator();
+  //   await reauthenticate({ email: activeUser.value.email, password: password.value });
+  //   await updatePassword({ password: newPassword.value });
+  //   clearForm();
+  //   isChangingPassword.value = false;
+  //   stopLoadingIndicator();
+  // } catch (error) {
+  //   alert('Возникла ошибка при обновлении данных пользователя. Попробуйте повторить еще раз.');
+  //   clearForm();
+  //   isChangingPassword.value = false;
+  //   stopLoadingIndicator();
+  // }
+
+  // Если раскомментировать то, что выше,
+  // то следующие две строки надо удалить
+  clearForm();
+  isChangingPassword.value = false;
+}
+
+function cancel() {
+  isChangingEmail.value = false;
+  isChangingPassword.value = false;
+  clearForm();
+}
+
+function clearForm() {
+  newEmail.value = '';
+  password.value = '';
+  newPassword.value = '';
 }
 </script>
 

@@ -7,56 +7,58 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import UserProfileCard from "@/components/user/UserProfileCard.vue";
 import UserProfileCardEditor from "@/components/user/UserProfileCardEditor.vue";
+import { computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
-import { mapActions, mapState } from 'pinia';
+import { useRouter } from 'vue-router';
 
-export default {
-  components: { UserProfileCard, UserProfileCardEditor },
-  props: {
-    edit: {
-      type: Boolean,
-      required: false
-    },
-    userId: {
-      type: String,
-      default: ''
-    }
+const props = defineProps({
+  edit: {
+    type: Boolean,
+    required: false
   },
-  computed: {
-    ...mapState(useAuthStore, ['authUser']),
-    ...mapState(useForumStore, ['user', 'isAsyncDataLoaded']),
-    otherUser() {
-      if (this.userId) {
-        return this.user(this.userId);
-      } else {
-        return null;
-      }
-    },
-    userToDisplay() {
-      return this.otherUser || this.authUser;
-    },
-  },
-  watch: {
-    userToDisplay(newValue) {
-      if (newValue === null) {
-        this.$router.push('/');
-      }
-    }
-  },
-  async created () {
-    if (this.userId) {
-      this.startLoadingIndicator();
-      await this.fetchUser({ id: this.userId });
-      this.stopLoadingIndicator();
-    } 
-  },
-  methods: {
-    ...mapActions(useForumStore, ['fetchUser', 'startLoadingIndicator', 'stopLoadingIndicator'])
+  userId: {
+    type: String,
+    default: ''
   }
+});
+
+const router = useRouter();
+
+const { authUser } = storeToRefs(useAuthStore());
+const { user, isAsyncDataLoaded } = storeToRefs(useForumStore());
+const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useForumStore();
+
+const otherUser = computed( () => {
+  if (props.userId) {
+    return user.value(props.userId);
+  } else {
+    return null;
+  }
+});
+
+const userToDisplay = computed( () => {
+  return otherUser.value || authUser.value;
+});
+
+watch(userToDisplay, (newValue) => {
+  if (newValue === null) {
+    router.push('/');
+  }
+});
+
+fetchAsyncData();
+
+async function fetchAsyncData() {
+  if (props.userId) {
+    startLoadingIndicator();
+    await fetchUser({ id: props.userId });
+    stopLoadingIndicator();
+  } 
 }
 </script>
 

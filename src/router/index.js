@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '../stores/AuthStore';
 import { useForumStore } from '../stores/ForumStore';
 import { findItemById } from '@/helpers';
@@ -69,11 +70,12 @@ const routes = [
     props: true,
     meta: { breadcrumb: 'Тема' },
     async beforeEnter (to, from, next) {
-      const forum = useForumStore();
+      const { threads } = storeToRefs(useForumStore());
+      const { fetchThread } = useForumStore();
 
-      await forum.fetchThread({ id: to.params.id, once: true });
+      await fetchThread({ id: to.params.id, once: true });
       // Проверяем, есть ли такая тема
-      const threadExists = findItemById(forum.threads, to.params.id);
+      const threadExists = findItemById(threads.value, to.params.id);
       // если есть - продолжаем
       if (threadExists) {
         return next();
@@ -122,16 +124,17 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  const auth = useAuthStore();
+  const { authId } = storeToRefs(useAuthStore());
+  const { initAuthentication } = useAuthStore();
   const { unsubscribeAllSnapshots } = useForumStore();
 
-  await auth.initAuthentication();
+  await initAuthentication();
   unsubscribeAllSnapshots();
 
-  if (to.meta.isAuthRequired && !auth.authId) {
+  if (to.meta.isAuthRequired && !authId) {
     return { name: 'SignIn', query: { redirectTo: to.path } };
   }
-  if (to.meta.isForGuests && auth.authId) {
+  if (to.meta.isForGuests && authId) {
     return { name: 'HomeView' };
   }
 });

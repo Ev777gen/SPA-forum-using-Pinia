@@ -8,31 +8,30 @@
   </VeeForm>
 </template>
 
-<script>
-export default {
-  props: {
-    post: { 
-      type: Object,
-      default: () => ({ text: null })
-    }
-  },
-  data () {
-    return {
-      postCopy: { ...this.post },
-      isDirty: !!this.post.text,
-      formKey: Math.random()
-    }
-  },
-  methods: {
-    save() {
-      this.$emit('save', { post: this.postCopy });
-      this.postCopy.text = '';
-      this.formKey = Math.random();
-    },
-    cancel() {
-      this.$emit('cancel');
-    }
+<script setup>
+import { reactive, ref } from 'vue';
+
+const props = defineProps({
+  post: { 
+    type: Object,
+    default: () => ({ text: null })
   }
+});
+
+const emit = defineEmits(['save', 'cancel']);
+
+const postCopy = reactive({ ...props.post });
+const isDirty = ref(!!props.post.text);
+const formKey = ref(Math.random());
+
+function save() {
+  emit('save', { post: postCopy });
+  postCopy.text = '';
+  formKey.value = Math.random();
+}
+
+function cancel() {
+  emit('cancel');
 }
 </script>
 

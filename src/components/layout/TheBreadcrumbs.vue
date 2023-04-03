@@ -1,6 +1,6 @@
 <template>
   <div class="breadcrumbs">
-    <ul v-if="breadcrumbs.length > 1">
+    <ul v-if="!isHomePage">
       <li
         v-for="(breadcrumb, idx) in breadcrumbs"
         :key="breadcrumb.name"
@@ -13,28 +13,30 @@
   </div>
 </template>
 
-<script>
-import { mapActions, mapState } from 'pinia';
+<script setup>
+import { computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useBreadcrumbsStore } from '@/stores/BreadcrumbsStore';
+import { useRoute } from 'vue-router';
 
-export default {
-  computed: {
-    ...mapState(useBreadcrumbsStore, ['breadcrumbs'])
-  },
-  watch: { 
-    '$route'() {
-      this.updateBreadcrumbs(this.$route);
-    },
-    'breadcrumbs.length'(newValue) {
-      if (newValue === 0) {
-        this.initialiseBreadcrumbs; 
-      }
-    }
-  },
-  methods: {
-    ...mapActions(useBreadcrumbsStore, ['changeRoute', 'initialiseBreadcrumbs', 'updateBreadcrumbs']),
+const route = useRoute();
+
+const { breadcrumbs } = storeToRefs(useBreadcrumbsStore());
+const { changeRoute, initialiseBreadcrumbs, updateBreadcrumbs } = useBreadcrumbsStore();
+
+const isHomePage = computed(() => {
+  return route.path === '/';
+});
+
+watch(route, (newValue) => {
+  updateBreadcrumbs(newValue);
+});
+
+watch(breadcrumbs, () => {
+  if (breadcrumbs.length === 0) {
+    initialiseBreadcrumbs(); 
   }
-}
+});
 </script>
 
 <style scoped>

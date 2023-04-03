@@ -7,57 +7,61 @@
     <ThreadEditor @save="save" @cancel="cancel" @dirty="formIsDirty = true" @clean="formIsDirty = false"/>
   </div>
 </template>
-<script>
+
+<script setup>
 import ThreadEditor from '@/components/forum/ThreadEditor';
-import { mapState, mapActions } from 'pinia';
+import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useForumStore } from '@/stores/ForumStore';
+import { useRouter } from 'vue-router';
+import { onBeforeRouteLeave } from 'vue-router';
 import { findItemById } from '@/helpers';
 
-export default {
-  components: { ThreadEditor },
-  props: {
-    forumId: { 
-      type: String, 
-      required: true 
-    }
-  },
-  data () {
-    return {
-      formIsDirty: false
-    }
-  },
-  computed: {
-    ...mapState(useForumStore, ['forums', 'isAsyncDataLoaded']),
-    forum () {
-      return findItemById(this.forums, this.forumId);
-    },
-  },
-  async created () {
-    this.startLoadingIndicator();
-    await this.fetchForum({ id: this.forumId });
-    this.stopLoadingIndicator();
-  },
-  methods: {
-    ...mapActions(useForumStore, ['fetchForum', 'createThread', 'startLoadingIndicator', 'stopLoadingIndicator']),
-    async save ({ title, text }) {
-      const thread = await this.createThread({
-        title,
-        text,
-        forumId: this.forum.id
-      });
-      this.$router.push({ name: 'ThreadView', params: { id: thread.id } });
-    },
-    cancel () {
-      this.$router.push({ name: 'ForumView', params: { id: this.forum.id } });
-    }
-  },
-  beforeRouteLeave () {
-    if (this.formIsDirty) {
-      const confirmed = window.confirm('Вы уверены, что хотите покунуть страницу? Все несохраненные изменения будут потеряны.');
-      if (!confirmed) return false;
-    }
+const props = defineProps({
+  forumId: { 
+    type: String, 
+    required: true 
   }
+});
+
+const router = useRouter();
+
+const formIsDirty = ref(false);
+
+const { forums, isAsyncDataLoaded } = storeToRefs(useForumStore());
+const { fetchForum, createThread, startLoadingIndicator, stopLoadingIndicator } = useForumStore();
+
+const forum = computed(() => {
+  return findItemById(forums.value, props.forumId);
+});
+
+fetchAsyncData();
+
+async function fetchAsyncData() {
+  startLoadingIndicator();
+  await fetchForum({ id: props.forumId });
+  stopLoadingIndicator();
 }
+
+async function save ({ title, text }) {
+  const thread = await createThread({
+    title,
+    text,
+    forumId: forum.value.id
+  });
+  router.push({ name: 'ThreadView', params: { id: thread.id } });
+}
+
+function cancel() {
+  router.push({ name: 'ForumView', params: { id: forum.value.id } });
+}
+
+onBeforeRouteLeave(() => {
+  if (formIsDirty.value) {
+    const isConfirmed = window.confirm('Вы уверены, что хотите покунуть страницу? Все несохраненные изменения будут потеряны.');
+    if (!isConfirmed) return false;
+  }
+});
 </script>
 
 <style scoped>

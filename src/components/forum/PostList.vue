@@ -52,15 +52,47 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import PostEditor from '@/components/forum/PostEditor';
-import { localeDate, userPostsCountWording, userThreadsCountWording } from '@/helpers';
+import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
-import { mapState, mapActions } from 'pinia';
+import { localeDate, userPostsCountWording, userThreadsCountWording } from '@/helpers';
 
+const props = defineProps({
+  posts: {
+    type: Array,
+    required: true
+  }
+});
+
+const editing = ref(null);
+
+const { authId } = storeToRefs(useAuthStore());
+const { users, user } = storeToRefs(useForumStore());
+const { updatePost } = useForumStore();
+
+function getUserById(userId) {
+  return user.value(userId);
+}
+
+function toggleEditMode(id) {
+  editing.value = id === editing.value ? null : id;
+}
+
+function handleUpdate(event) {
+  updatePost(event.post);
+  editing.value = null;
+}
+
+function hidePostEditor() {
+  editing.value = null;
+}
+
+/*
 export default {
-  components: { PostEditor },
+  //components: { PostEditor },
   props: {
     posts: {
       type: Array,
@@ -95,7 +127,7 @@ export default {
       this.editing = null;
     }
   }
-}
+}*/
 </script>
 
 <style lang="scss" scoped>

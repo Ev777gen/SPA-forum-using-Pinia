@@ -37,29 +37,23 @@
   </div>
 </template>
 
-<script>
-import { mapState, mapActions } from 'pinia';
+<script setup>
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
 
-export default {
-  name: 'HomeView',
-  computed: {
-    ...mapState(useAuthStore, ['authUser'])
-  },
-  methods: {
-    ...mapActions(useAuthStore, ['signInWithEmailAndPassword']),
-    ...mapActions(useForumStore, ['startLoadingIndicator', 'stopLoadingIndicator', 'fetchUser']),
-    async logInToCheckOutThisSite() {
-      try {
-        this.startLoadingIndicator();
-        const defaultUser = await this.fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
-        await this.signInWithEmailAndPassword({ email: defaultUser.email, password: '123456' });
-        this.stopLoadingIndicator();
-      } catch (error) {
-        alert(error.message);
-      }
-    }
+const { authUser } = storeToRefs(useAuthStore());
+const { signInWithEmailAndPassword } = useAuthStore();
+const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useForumStore();
+
+async function logInToCheckOutThisSite() {
+  try {
+    startLoadingIndicator();
+    const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
+    await signInWithEmailAndPassword({ email: defaultUser.email, password: '123456' });
+    stopLoadingIndicator();
+  } catch (error) {
+    alert(error.message);
   }
 }
 </script>

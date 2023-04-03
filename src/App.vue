@@ -18,37 +18,33 @@
 
 </template>
 
-<script>
+<script setup>
 import TheNavbar from '@/components/layout/TheNavbar';
 import TheSidebar from '@/components/layout/TheSidebar';
 import TheBreadcrumbs from '@/components/layout/TheBreadcrumbs';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
-import { mapState, mapActions } from 'pinia';
+import router from "@/router";
 import NProgress from 'nprogress';
 
-export default {
-  name: 'App',
-  components: { TheNavbar, TheSidebar, TheBreadcrumbs },
-  computed: {
-    ...mapState(useForumStore, ['isAsyncDataLoaded'])
-  },
-  created () {
-    this.fetchAuthUser();
-    NProgress.configure({
-      speed: 200,
-      showSpinner: false
-    });
-    this.$router.beforeEach(() => {
-      NProgress.start();
-    });
-    this.$router.afterEach(() => {
-      setTimeout(() => NProgress.done(), 500);
-    });
-  },
-  methods: {
-    ...mapActions(useAuthStore, ['fetchAuthUser']),
-  }
+const { isAsyncDataLoaded } = storeToRefs(useForumStore());
+const { fetchAuthUser } = useAuthStore();
+
+fetchAsyncData();
+
+async function fetchAsyncData() {
+  await fetchAuthUser();
+  NProgress.configure({
+    speed: 200,
+    showSpinner: false
+  });
+  router.beforeEach(() => {
+    NProgress.start();
+  });
+  router.afterEach(() => {
+    setTimeout(() => NProgress.done(), 500);
+  });
 }
 </script>
 

@@ -17,31 +17,28 @@
   </div>
 </template>
 
-<script>
-import { mapActions } from 'pinia';
+<script setup>
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/AuthStore';
 
-export default {
-  data () {
-    return {
-      form: {
-        name: '',
-        username: '',
-        email: '',
-        password: ''
-      }
-    }
-  },
-  methods: {
-    ...mapActions(useAuthStore, ['registerUserWithEmailAndPassword']),
-    async register () {
-      try {
-        await this.registerUserWithEmailAndPassword(this.form);
-        this.$router.push('/');
-      } catch (error) {
-        alert(error.message);
-      }
-    }
-  },
+const router = useRouter();
+
+const form = reactive({
+  name: '',
+  username: '',
+  email: '',
+  password: ''
+});
+
+const { registerUserWithEmailAndPassword } = useAuthStore();
+
+async function register () {
+  try {
+    await registerUserWithEmailAndPassword(form);
+    router.push('/');
+  } catch (error) {
+    alert(error.message);
+  }
 }
 </script>

@@ -5,26 +5,27 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import CategoryList from '@/components/forum/CategoryList';
-import { mapState, mapActions } from 'pinia';
+import { storeToRefs } from 'pinia';
 import { useForumStore } from '@/stores/ForumStore';
 
-export default {
-  components: { CategoryList },
-  computed: {
-    ...mapState(useForumStore, ['categories', 'isAsyncDataLoaded']),
-  },
-  async created () {
-    this.startLoadingIndicator();
-    const categories = await this.fetchAllCategories();
-    const forumIds = categories.map(category => category.forumIds).flat();
-    await this.fetchForums({ ids: forumIds });
-    this.stopLoadingIndicator();
-  },
-  methods: {
-    ...mapActions(useForumStore, ['fetchAllCategories', 'fetchForums', 'startLoadingIndicator', 'stopLoadingIndicator'])
-  }
+const { categories, isAsyncDataLoaded } = storeToRefs(useForumStore());
+const { 
+  fetchAllCategories, 
+  fetchForums, 
+  startLoadingIndicator, 
+  stopLoadingIndicator 
+} = useForumStore();
+
+fetchAsyncData();
+
+async function fetchAsyncData() {
+  startLoadingIndicator();
+  const categoriesToDisplay = await fetchAllCategories();
+  const forumIds = categoriesToDisplay.map(category => category.forumIds).flat();
+  await fetchForums({ ids: forumIds });
+  stopLoadingIndicator();
 }
 </script>
 
