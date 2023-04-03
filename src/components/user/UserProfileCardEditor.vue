@@ -43,11 +43,59 @@
   </div>
 </template>
 
-<script>
-import { mapActions } from 'pinia';
+<script setup>
+import { reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
+import { useRouter } from 'vue-router';
 
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
+  }
+});
+
+const router = useRouter();
+
+const activeUser = reactive({ ...props.user });
+const avatar = ref(null);
+const avatarPreview = ref(null);
+
+const { uploadAvatar } = useAuthStore();
+const { updateUser } = useForumStore();
+
+function changeAvatar (e) {
+  avatar.value = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    avatarPreview.value = event.target.result;
+  }
+  reader.readAsDataURL(avatar.value);
+}
+
+function deleteAvatar() {
+  activeUser.avatar = '';
+}
+
+async function save() {
+  const isAvatarChanged = avatar.value !== null || activeUser.avatar === '';
+  if (isAvatarChanged) {
+    // Загружаем аватар в Firebase Storage и получаем его URL
+    const uploadedImageURL = await uploadAvatar({ file: avatar.value });
+    activeUser.avatar = uploadedImageURL || activeUser.avatar;
+  }
+  // Надо клонировать объект, прежде чем посылать его в store
+  // Если этого не сделать, получается мы создаем реактивную привязку данных
+  updateUser({...activeUser});
+  // Выходим из редактирования и возвращаемся к отображению информации
+  router.push({name: 'ProfileView'});
+}
+
+function cancel() {
+  router.push({name: 'ProfileView'});
+}
+/*
 export default {
   props: {
     user: {
@@ -93,7 +141,7 @@ export default {
       this.$router.push({name: 'ProfileView'});
     },
   },
-}
+}*/
 </script>
 
 <style lang="scss" scoped>

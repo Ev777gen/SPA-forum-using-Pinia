@@ -41,25 +41,20 @@
   </div>
 </template>
 
-<script>
-import { mapState } from 'pinia';
+<script setup>
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { localeDate } from '@/helpers';
 
-export default {
-  props: {
-    user: {
-      type: Object,
-      required: true
-    }
-  },
-  computed: {
-    ...mapState(useAuthStore, ['authId']),
-  },
-  methods: {
-    localeDate,
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
   }
-}
+});
+
+const { authId } = storeToRefs(useAuthStore());
+
 </script>
 
 <style lang="scss" scoped>

@@ -1,8 +1,18 @@
 import { defineStore } from 'pinia';
 import { findItemById } from '@/helpers';
 import { db } from "@/main.js";
-import { collection,doc, getDoc, getDocs, setDoc, updateDoc, arrayUnion, writeBatch, serverTimestamp, increment, onSnapshot } from "firebase/firestore";
-//import auth from './modules/auth'; // ??? Заменяем на:
+import { 
+  collection, 
+  doc, 
+  getDoc, 
+  getDocs, 
+  setDoc, 
+  updateDoc, 
+  arrayUnion, 
+  writeBatch, 
+  serverTimestamp, 
+  increment, 
+  onSnapshot } from "firebase/firestore";
 import { useAuthStore } from './AuthStore';
 import chunk from 'lodash/chunk';
 
@@ -61,30 +71,6 @@ export const useForumStore = defineStore('ForumStore', {
       }
     },
   },
-  /*mutations: {
-    setItem(state, { resource, item }) {
-      pushItemToStore(state[resource], item);
-    },
-    // Мутации для дублирования перекрестных связей между 
-    // документами в БД Firestore сюда, в store
-    appendPostToThread: makeAppendChildToParentMutation({child: 'postIds', parent: 'threads'}),
-    appendContributorToThread: makeAppendChildToParentMutation({child: 'contributorIds', parent: 'threads'}),
-    appendThreadToForum: makeAppendChildToParentMutation({child: 'threadIds', parent: 'forums'}),
-    appendThreadToUser: makeAppendChildToParentMutation({child: 'threadsStarted', parent: 'users'}),
-    // Мутации для работы с обновлением в реальном времени из БД
-    appendUnsubscribe (state, { unsubscribe }) {
-      state.unsubscribes.push(unsubscribe);
-    },
-    clearAllUnsubscribes (state) {
-      state.unsubscribes = [];
-    },
-    setIsLoadedStatus(state, status) {
-      state.isLoaded = status;
-    },
-    clearThreadsForPagination(state) {
-      state.threads = [];
-    }
-  },*/
   actions: {
     //------------------------------------------------------------
     // Чтение из БД Cloud Firestore
@@ -166,16 +152,6 @@ export const useForumStore = defineStore('ForumStore', {
       const limitedIds = chunks[page - 1];
       return this.fetchThreads({ ids: limitedIds });
     },
-    // Изначальный вариант:
-    /*fetchThreadsByPage: ({ ids = [], page, threadsPerPage = 10 }) => {
-      //console.log('fetchThreadsByPage')
-      if (ids.length === 0) return [];
-      //console.log('fetchThreadsByPage -> this.threads', this.threads)
-      this.threads = [];
-      const chunks = chunk(ids, threadsPerPage);
-      const limitedIds = chunks[page - 1];
-      return this.fetchThreads({ ids: limitedIds });
-    },*/
     fetchPosts({ids}) {
       return this.fetchItems({ resource: 'posts', ids });
     },

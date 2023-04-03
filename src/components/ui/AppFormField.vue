@@ -13,13 +13,17 @@
     <VeeErrorMessage :name="name" class="form__error" />
   </div>
 </template>
+
+<script setup>
+const props = defineProps({
+  name: { type: String, required: true },
+  label: { type: String, default: '' },
+  modelValue: { type: String, default: '' }
+});
+</script>
+
 <script>
 export default {
   inheritAttrs: false,
-  props: {
-    name: { type: String, required: true },
-    label: { type: String, default: '' },
-    modelValue: { type: String, default: '' }
-  }
 }
 </script>

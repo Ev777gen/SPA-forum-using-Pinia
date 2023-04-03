@@ -47,44 +47,43 @@
   </header>
 </template>
 
-<script>
-import { mapActions, mapState } from 'pinia';
+<script setup>
+import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
-import vClickOutside from 'click-outside-vue3';
+import { useRouter } from 'vue-router';
+import clickOutside from 'click-outside-vue3';
 
-export default {
-  directives: {
-    clickOutside: vClickOutside.directive
-  },
-  data () {
-    return {
-      isDropdownOpen: false,
-      isMobile: false
-    }
-  },
-  computed: {
-    ...mapState(useAuthStore, ['authUser'])
-  },
-  created () {
-    this.$router.beforeEach(() => {
-      this.isDropdownOpen = false;
-    });
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      this.isMobile = true;
-    } else {
-      this.isMobile = false;
-    }
-  },
-  methods: {
-    ...mapActions(useAuthStore, ['signOut']),
-    onSignOut () {
-      this.signOut();
-      this.isDropdownOpen = false;
-    },
-    onClickOutside () {
-      this.isDropdownOpen = false;
-    }
+const vClickOutside = clickOutside.directive;
+
+const router = useRouter();
+
+const isDropdownOpen = ref(false);
+const isMobile = ref(false);
+
+const { authUser } = storeToRefs(useAuthStore());
+const { signOut } = useAuthStore();
+
+onCreated();
+
+async function onCreated() {
+  router.beforeEach(() => {
+    isDropdownOpen.value = false;
+  });
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    isMobile.value = true;
+  } else {
+    isMobile.value = false;
   }
+}
+
+function onSignOut () {
+  signOut();
+  isDropdownOpen.value = false;
+}
+
+function onClickOutside () {
+  isDropdownOpen.value = false;
 }
 </script>
 

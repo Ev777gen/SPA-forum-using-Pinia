@@ -8,26 +8,21 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ForumList from '@/components/forum/ForumList';
+import { storeToRefs } from 'pinia';
 import { useForumStore } from '@/stores/ForumStore';
-import { mapState } from 'pinia';
 
-export default {
-  components: { ForumList },
-  props: {
-    categories: {
-      type: Array,
-      required: true
-    }
-  },
-  computed: {
-    ...mapState(useForumStore, ['forums']),
-  },
-  methods: {
-    getForumsForCategory (category) {
-      return this.forums.filter(forum => forum.categoryId === category.id);
-    }
+const props = defineProps({
+  categories: {
+    type: Array,
+    required: true
   }
+});
+
+const { forums } = storeToRefs(useForumStore());
+
+function getForumsForCategory (category) {
+  return forums.value.filter(forum => forum.categoryId === category.id);
 }
 </script>

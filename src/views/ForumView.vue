@@ -27,78 +27,78 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import ThreadList from '@/components/forum/ThreadList';
-import { mapState, mapActions } from 'pinia';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
+import { useRouter, useRoute } from 'vue-router';
 import { findItemById } from '@/helpers';
 
-export default {
-  components: { ThreadList },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
-  data () {
-    return {
-      page: parseInt(this.$route.query.page) || 1,
-      threadsPerPage: 10
-    }
-  },
-  computed: {
-    ...mapState(useAuthStore, ['authUser']),
-    ...mapState(useForumStore, {
-      isAsyncDataLoaded: 'isAsyncDataLoaded',
-      forum (store) {
-        return findItemById(store.forums, this.id);
-      },
-      threadsToDisplay (store) {
-        if (!this.forum) return [];
-        return store.threads
-          .filter(thread => thread.forumId === this.forum.id)
-          .map(thread => store.thread(thread.id));
-      },
-      threadsCount () {
-        return this.forum.threadIds?.length || 0;
-      },
-      totalPagesCount () {
-        if (!this.threadsCount) return 0;
-        return Math.ceil(this.threadsCount / this.threadsPerPage);
-      }
-    })
-  },
-  watch: {
-    async page (page) {
-      this.$router.push({ query: { page } });
-    }
-  },
-  async created () {
-    try {
-      this.startLoadingIndicator();
-      const forum = await this.fetchForum({ id: this.id });
-      const threads = await this.fetchThreadsByPage({ 
-        ids: forum.threadIds, 
-        page: this.page, 
-        threadsPerPage: this.threadsPerPage 
-      });
-      const users = await this.fetchUsers({ ids: threads.map(thread => thread.userId) });
-      this.stopLoadingIndicator();
-    } catch(err) {
-      console.log(err);
-    }
-  },
-  methods: {
-    ...mapActions(useForumStore, [
-      'fetchForum', 
-      'fetchThreads', 
-      'fetchThreadsByPage', 
-      'fetchUsers', 
-      'startLoadingIndicator', 
-      'stopLoadingIndicator'
-    ])
+const props = defineProps({
+  id: {
+    type: String,
+    required: true
+  }
+});
+
+const router = useRouter();
+const route = useRoute();
+
+const page = ref(parseInt(route.query.page) || 1);
+const threadsPerPage = 10;
+
+const { authUser } = storeToRefs(useAuthStore());
+const { forums, threads, thread, isAsyncDataLoaded } = storeToRefs(useForumStore());
+const { 
+  fetchForum, 
+  fetchThreads, 
+  fetchThreadsByPage, 
+  fetchUsers, 
+  startLoadingIndicator, 
+  stopLoadingIndicator
+} = useForumStore();
+
+const forum = computed( () => {
+  return findItemById(forums.value, props.id);
+});
+
+const threadsToDisplay = computed( () => {
+  if (!forum.value) return [];
+  return threads.value
+    .filter(currentThread => currentThread.forumId === forum.value.id)
+    .map(currentThread => thread.value(currentThread.id));
+});
+
+const threadsCount = computed( () => {
+  return forum.value.threadIds?.length || 0;
+});
+
+const totalPagesCount = computed( () => {
+  if (!threadsCount.value) return 0;
+  return Math.ceil(threadsCount.value / threadsPerPage);
+});
+
+watch(page, async (page) => {
+  router.push({ query: { page } });
+});
+
+fetchAsyncData();
+
+async function fetchAsyncData() {
+  try {
+    startLoadingIndicator();
+    const forum = await fetchForum({ id: props.id });
+    const threads = await fetchThreadsByPage({ 
+      ids: forum.threadIds, 
+      page: page.value, 
+      threadsPerPage 
+    });
+    const users = await fetchUsers({ ids: threads.map(thread => thread.userId) });
+    stopLoadingIndicator();
+  } catch(err) {
+    console.log(err);
   }
 }
 </script>

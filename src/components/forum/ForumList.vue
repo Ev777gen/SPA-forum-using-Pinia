@@ -20,19 +20,15 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { forumThreadsCountWording } from '@/helpers';
-export default {
-  props: {
-    forums: {
-      type: Array,
-      required: true
-    }
-  },
-  methods: {
-    forumThreadsCountWording
+
+const props = defineProps({
+  forums: {
+    type: Array,
+    required: true
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>

@@ -36,60 +36,64 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import PostList from '@/components/forum/PostList';
 import PostEditor from '@/components/forum/PostEditor';
-import { mapState, mapActions } from 'pinia';
+import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
 import { localeDate, repliesCountWording } from '@/helpers';
 
-export default {
-  name: 'ThreadView',
-  components: { PostList, PostEditor },
-  props: {
-    id: {
-      type: String,
-      required: true
-    }
-  },
-  computed: {
-    ...mapState(useAuthStore, ['authUser']),
-    ...mapState(useForumStore, {
-      isAsyncDataLoaded: 'isAsyncDataLoaded',
-      thread(state) {
-        return state.thread(this.id);
-      },
-      threadPosts(state) {
-        return state.posts.filter(post => post.threadId === this.id);
-      },
-    })
-  },
-  async created () {
-    this.startLoadingIndicator();
-    const thread = await this.fetchThread({ id: this.id });
-    await this.fetchPostsWithUsers(thread.postIds);
-    this.stopLoadingIndicator();
-  },
-  methods: {
-    ...mapActions(useForumStore, ['fetchThread', 'fetchUsers', 'fetchPosts', 'createPost', 'startLoadingIndicator', 'stopLoadingIndicator']),
-    localeDate,
-    repliesCountWording,
-    addPost (eventData) {
-      const post = {
-        ...eventData.post,
-        threadId: this.id
-      };
-      this.createPost(post);
-    },
-    async fetchPostsWithUsers (ids) {
-      // Загружаем из базы данных посты
-      const posts = await this.fetchPosts({ ids });
-      // Загружаем пользователей, написавших эти посты
-      const users = posts.map(post => post.userId).concat(this.thread.userId);
-      await this.fetchUsers({ ids: users });
-    }
+const props = defineProps({
+  id: {
+    type: String,
+    required: true
   }
+});
+
+const { authUser } = storeToRefs(useAuthStore());
+const { thread: threadGetter, posts, isAsyncDataLoaded } = storeToRefs(useForumStore());
+const { 
+  fetchThread, 
+  fetchUsers, 
+  fetchPosts, 
+  createPost, 
+  startLoadingIndicator, 
+  stopLoadingIndicator 
+} = useForumStore();
+
+const thread = computed(() => {
+  return threadGetter.value(props.id);
+});
+
+const threadPosts = computed(() => {
+  return posts.value.filter(post => post.threadId === props.id);
+});
+
+fetchAsyncData();
+
+async function fetchAsyncData() {
+  startLoadingIndicator();
+  const thread = await fetchThread({ id: props.id });
+  await fetchPostsWithUsers(thread.postIds);
+  stopLoadingIndicator();
+}
+
+function addPost (eventData) {
+  const post = {
+    ...eventData.post,
+    threadId: props.id
+  };
+  createPost(post);
+}
+
+async function fetchPostsWithUsers (ids) {
+  // Загружаем из базы данных посты
+  const posts = await fetchPosts({ ids });
+  // Загружаем id пользователей, написавших эти посты
+  const userIds = posts.map(post => post.userId).concat(thread.value.userId);
+  await fetchUsers({ ids: userIds });
 }
 </script>
 

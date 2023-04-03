@@ -31,31 +31,26 @@
   </div>
 </template>
 
-<script>
-import { localeDate, findItemById, repliesCountWording } from '@/helpers';
-import { mapState } from 'pinia';
+<script setup>
+import { storeToRefs } from 'pinia';
 import { useForumStore } from '@/stores/ForumStore';
+import { localeDate, findItemById, repliesCountWording } from '@/helpers';
 
-export default {
-  props: {
-    threads: {
-      type: Array,
-      required: true
-    }
-  },
-  computed: {
-    ...mapState(useForumStore, ['posts', 'users']),
-  },
-  methods: {
-    localeDate,
-    repliesCountWording,
-    postById (postId) {
-      return findItemById(this.posts, postId);
-    },
-    userById (userId) {
-      return findItemById(this.users, userId) || {};
-    }
+const props = defineProps({
+  threads: {
+    type: Array,
+    required: true
   }
+});
+
+const { posts, users } = storeToRefs(useForumStore());
+
+function postById (postId) {
+  return findItemById(posts.value, postId);
+}
+
+function userById (userId) {
+  return findItemById(users.value, userId) || {};
 }
 </script>
 
