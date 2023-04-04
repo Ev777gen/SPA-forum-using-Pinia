@@ -46,8 +46,12 @@ const thread = computed(() => {
 });
 
 const text = computed(() => {
-  const post = findItemById(posts.value, thread.value?.postIds[0]);
-  return post ? post.text : '';
+  if (thread.value.postIds) {
+    const post = findItemById(posts.value, thread.value.postIds[0]);
+    return post ? post.text : '';
+  } else {
+    return '';
+  }
 });
 
 fetchAsyncData();
