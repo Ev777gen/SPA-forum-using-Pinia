@@ -67,8 +67,6 @@ $header-height: 75px;
 }
 
 .app {
-  /*min-height: 100%;
-  height: 1px;*/
   min-height: 100vh;
   background-color: #fff;
   
@@ -82,8 +80,6 @@ $header-height: 75px;
   }
   
   &__body {
-    /*min-height: 100%;
-    height: 1px;*/
     margin-top: $header-height;
   }
 
