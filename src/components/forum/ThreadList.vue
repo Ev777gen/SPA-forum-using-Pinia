@@ -71,10 +71,6 @@ function userById (userId) {
   &__title {
     font-size: 18px;
   }
-  
-  /*&__info {
-    color: #777;
-  }*/
 
   &__activity {
     flex-basis: 35%;
