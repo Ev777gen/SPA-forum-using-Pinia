@@ -1,7 +1,7 @@
 
 html,
 body {
-  min-height: 100vh;
+  /*min-height: 100vh;*/
   line-height: 1.5em;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -9,6 +9,33 @@ body {
   color: #444;
   background-color: #fff;
 }
+
+body.dark-mode {
+  color: #fff;
+
+  & a,
+  & .link {
+    color: #6ff0d4;
+    color: #6be2c8;
+    color: #58e2d7;
+    transition: all ease 0.3s;
+    &:hover {
+      color: #98ffe9;
+    }
+  }
+
+  & .text_gray {
+    color: #fff;
+  }
+
+  & .btn_orange {
+    background: #c47738;
+    &:hover:not(:disabled) {
+      background: #df8740;
+    }
+  }
+}
+
 
 
 /* Заголовки */

@@ -1,11 +1,11 @@
 <template>
-  <div class="app">
+  <div class="app" :style="isDarkMode ? { backgroundColor: '#5f5f65', color: '#fff' } : null">
     <header class="app__header">
       <TheNavbar/>
     </header>
     <hr>
     <div class="app__body container">
-      <aside class="app__sidebar desktop-only">
+      <aside class="app__sidebar desktop-only" :style="isDarkMode ? { backgroundColor: '#555' } : null">
         <TheSidebar />
       </aside>
       <main class="app__content">
@@ -15,7 +15,6 @@
       </main>
     </div>
   </div>
-
 </template>
 
 <script setup>
@@ -27,9 +26,11 @@ import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
 import router from "@/router";
 import NProgress from 'nprogress';
+import useDarkMode from '@/composables/useDarkMode';
 
 const { isAsyncDataLoaded } = storeToRefs(useForumStore());
 const { fetchAuthUser } = useAuthStore();
+const { isDarkMode } = useDarkMode();
 
 fetchAsyncData();
 
@@ -66,8 +67,10 @@ $header-height: 75px;
 }
 
 .app {
-  min-height: 100%;
-  height: 1px;
+  /*min-height: 100%;
+  height: 1px;*/
+  min-height: 100vh;
+  background-color: #fff;
   
   &__header {
     position: fixed;
@@ -79,8 +82,8 @@ $header-height: 75px;
   }
   
   &__body {
-    min-height: 100%;
-    height: 1px;
+    /*min-height: 100%;
+    height: 1px;*/
     margin-top: $header-height;
   }
 

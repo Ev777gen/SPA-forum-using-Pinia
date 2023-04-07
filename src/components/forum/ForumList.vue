@@ -1,6 +1,11 @@
 <template>
   <div class="list">
-    <div class="list__item forum" v-for="forum in forums" :key="forum.id">
+    <div 
+      v-for="(forum, index) in forums" 
+      :key="forum.id" 
+      :style="isDarkMode ? { backgroundColor: index % 2 === 0 ? '#777' : '#666' } : null"
+      class="list__item forum" 
+    >
       <div class="forum__details">
         <router-link
           :to="{name: 'ForumView', params: {id: forum.id}}"
@@ -22,6 +27,7 @@
 
 <script setup>
 import { forumThreadsCountWording } from '@/helpers';
+import useDarkMode from '@/composables/useDarkMode';
 
 const props = defineProps({
   forums: {
@@ -29,6 +35,8 @@ const props = defineProps({
     required: true
   }
 });
+
+const { isDarkMode } = useDarkMode();
 </script>
 
 <style lang="scss" scoped>

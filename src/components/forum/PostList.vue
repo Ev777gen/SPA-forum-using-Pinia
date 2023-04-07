@@ -1,8 +1,9 @@
 <template>
   <div class="wrapper">
     <div class="post"
-         v-for="post in posts"
-         :key="post.id"
+      v-for="post in posts"
+      :key="post.id"
+      :style="isDarkMode ? { backgroundColor: '#888' } : null"
     >
       <div v-if="getUserById(post.userId)" class="post__user-info">
         <router-link :to="{name: 'ProfileOfAnyUser', params: {userId: post.userId}}" class="post__user-name">
@@ -59,6 +60,7 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
 import { localeDate, userPostsCountWording, userThreadsCountWording } from '@/helpers';
+import useDarkMode from '@/composables/useDarkMode';
 
 const props = defineProps({
   posts: {
@@ -66,6 +68,8 @@ const props = defineProps({
     required: true
   }
 });
+
+const { isDarkMode } = useDarkMode();
 
 const editing = ref(null);
 

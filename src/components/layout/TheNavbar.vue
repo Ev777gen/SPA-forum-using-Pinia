@@ -3,44 +3,54 @@
     <div class="header__body container">
 
       <router-link :to="{name: 'HomeView'}" v-if="!isMobile || (authUser && isMobile)" class="header__logo">Logo</router-link>
-      <a
-        v-if="authUser && !isMobile"
-        @click.prevent="isDropdownOpen = !isDropdownOpen"
-        v-click-outside="onClickOutside"
-        class="header__user-avatar"
-      >
-        <AppAvatar class="header__avatar avatar_small" :src="authUser?.avatar" :alt="`${authUser.name} profile image`"/>
-        <font-awesome-icon icon="fa-solid fa-angle-down" class="header__arrow" :class="{'header__arrow_up': isDropdownOpen}" />
-      </a>
-      
-      <div 
-        v-else-if="authUser && isMobile" 
-        @click="isDropdownOpen = !isDropdownOpen"
-        v-click-outside="onClickOutside"
-        class="burger"
-      >
-        <div class="burger__top-bar"></div>
-        <div class="burger__middle-bar"></div>
-        <div class="burger__bottom-bar"></div>
-      </div>
 
-      <div v-else class="header__not-auth-user">
-        <router-link :to="{name: 'RegisterForm'}" class="header__link">Зарегистрироваться</router-link>
-        <router-link :to="{name: 'SignIn'}" class="header__link">
-          <font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Войти
-        </router-link>
-      </div>
+      <div class="header__menu">
 
-      <div class="dropdown" :class="{'dropdown_open': isDropdownOpen}">
-        <nav class="dropdown__nav mobile-only">
-          <router-link :to="{name: 'HomeView'}" class="dropdown__link">На главную</router-link>
-          <router-link :to="{name: 'ForumMainPage'}" class="dropdown__link">Форум</router-link>
-          <router-link :to="{name: 'AboutMe'}" class="dropdown__link">Обо мне</router-link>
-          <hr>
-        </nav>
-        <router-link :to="{name: 'ProfileView'}" class="dropdown__link">Мой профиль</router-link>
-        <router-link :to="{name: 'SettingsView'}" class="dropdown__link">Настройки</router-link>
-        <a href="" class="dropdown__link" @click.prevent="onSignOut">Выйти <font-awesome-icon icon="fa-solid fa-right-from-bracket" /></a>
+        <label class="switch">
+          <input type="checkbox" v-model="isDarkMode" @click="toggleDarkMode" />
+          <span class="slider round"></span>
+        </label>
+
+        <a
+          v-if="authUser && !isMobile"
+          @click.prevent="isDropdownOpen = !isDropdownOpen"
+          v-click-outside="onClickOutside"
+          class="header__user-avatar"
+        >
+          <AppAvatar class="header__avatar avatar_small" :src="authUser?.avatar" :alt="`${authUser.name} profile image`"/>
+          <font-awesome-icon icon="fa-solid fa-angle-down" class="header__arrow" :class="{'header__arrow_up': isDropdownOpen}" />
+        </a>
+        
+        <div 
+          v-else-if="authUser && isMobile" 
+          @click="isDropdownOpen = !isDropdownOpen"
+          v-click-outside="onClickOutside"
+          class="burger"
+        >
+          <div class="burger__top-bar"></div>
+          <div class="burger__middle-bar"></div>
+          <div class="burger__bottom-bar"></div>
+        </div>
+
+        <div v-else class="header__not-auth-user">
+          <router-link :to="{name: 'RegisterForm'}" class="header__link">Зарегистрироваться</router-link>
+          <router-link :to="{name: 'SignIn'}" class="header__link">
+            <font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Войти
+          </router-link>
+        </div>
+
+        <div class="dropdown" :class="{'dropdown_open': isDropdownOpen}" :style="isDarkMode ? { backgroundColor: '#eee' } : null">
+          <nav class="dropdown__nav mobile-only">
+            <router-link :to="{name: 'HomeView'}" class="dropdown__link">На главную</router-link>
+            <router-link :to="{name: 'ForumMainPage'}" class="dropdown__link">Форум</router-link>
+            <router-link :to="{name: 'AboutMe'}" class="dropdown__link">Обо мне</router-link>
+            <hr :style="isDarkMode ? { backgroundColor: '#ddd' } : null">
+          </nav>
+          <router-link :to="{name: 'ProfileView'}" class="dropdown__link">Мой профиль</router-link>
+          <router-link :to="{name: 'SettingsView'}" class="dropdown__link">Настройки</router-link>
+          <a href="" class="dropdown__link" @click.prevent="onSignOut">Выйти <font-awesome-icon icon="fa-solid fa-right-from-bracket" /></a>
+        </div>
+
       </div>
       
     </div>
@@ -53,10 +63,13 @@ import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useRouter } from 'vue-router';
 import clickOutside from 'click-outside-vue3';
+import useDarkMode from '@/composables/useDarkMode';
 
 const vClickOutside = clickOutside.directive;
 
 const router = useRouter();
+
+const { isDarkMode, toggleDarkMode } = useDarkMode();
 
 const isDropdownOpen = ref(false);
 const isMobile = ref(false);
@@ -109,6 +122,11 @@ $triangle-size: 8px;
     font-size: 32px;
     font-weight: bold;
     color: #fff;
+  }
+
+  &__menu {
+    display: flex;
+    align-items: center;
   }
 
   &__not-auth-user {
@@ -226,4 +244,76 @@ $triangle-size: 8px;
     visibility: visible;
   }
 }
+
+
+/* The switch - the box around the slider */
+$switch-width: 36px;
+$switch-height: 22px;
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: $switch-width;
+  height: $switch-height;
+  margin-right: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  background-color: #bbb;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+  background-color: #248add;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX($switch-width / 2 - 4px);
+  -ms-transform: translateX($switch-width / 2 - 4px);
+  transform: translateX($switch-width / 2 - 4px);
+  background-color: #111;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: $switch-height;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
 </style>

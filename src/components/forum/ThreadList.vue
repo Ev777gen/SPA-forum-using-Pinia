@@ -1,12 +1,17 @@
 <template>
   <h2 class="list__title">Список тем</h2>
   <div v-if="threads.length" class="list">
-    <div v-for="thread in threads" :key="thread.id" class="list__item thread">
+    <div 
+      v-for="(thread, index) in threads" 
+      :key="thread.id" 
+      :style="isDarkMode ? { backgroundColor: index % 2 === 0 ? '#777' : '#666' } : null"
+      class="list__item thread" 
+    >
       <div>
         <p class="thread__title">
           <router-link :to="{name: 'ThreadView', params: {id: thread.id}}">{{ thread.title }}</router-link>
         </p>
-        <p class="thread__info desktop-only">
+        <p class="thread__info text_gray desktop-only">
           Тема начата пользователем  
           <router-link :to="{name: 'ProfileOfAnyUser', params: {userId: thread.userId}}">{{ userById(thread.userId).name }}</router-link>, 
           {{ localeDate(thread.publishedAt) }}
@@ -35,6 +40,7 @@
 import { storeToRefs } from 'pinia';
 import { useForumStore } from '@/stores/ForumStore';
 import { localeDate, findItemById, repliesCountWording } from '@/helpers';
+import useDarkMode from '@/composables/useDarkMode';
 
 const props = defineProps({
   threads: {
@@ -42,6 +48,8 @@ const props = defineProps({
     required: true
   }
 });
+
+const { isDarkMode } = useDarkMode();
 
 const { posts, users } = storeToRefs(useForumStore());
 
@@ -64,9 +72,9 @@ function userById (userId) {
     font-size: 18px;
   }
   
-  &__info {
+  /*&__info {
     color: #777;
-  }
+  }*/
 
   &__activity {
     flex-basis: 35%;
