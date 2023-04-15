@@ -2,7 +2,7 @@
   <div v-if="user" class="card">
     <div class="card__header">
       <div class="card__background_cover"></div>
-      <div class="card__background_footer">
+      <div class="card__background_footer" :style="isDarkMode ? { backgroundColor: '#4f4f55' } : null">
         <p class="card__name">{{ user.name }}</p>
         <p class="card__date text_gray desktop-only">Зарегистрирован {{ localeDate(user.registeredAt) }}</p>
       </div>
@@ -42,11 +42,13 @@
 </template>
 
 <script setup>
+import { defineProps } from "vue";
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { localeDate } from '@/helpers';
+import useDarkMode from '@/composables/useDarkMode';
 
-const props = defineProps({
+defineProps({
   user: {
     type: Object,
     required: true
@@ -54,6 +56,7 @@ const props = defineProps({
 });
 
 const { authId } = storeToRefs(useAuthStore());
+const { isDarkMode } = useDarkMode();
 
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <nav class="sidebar__nav" :style="isDarkMode ? { backgroundColor: '#888' } : null">
+    <nav class="sidebar__nav" :style="isDarkMode ? { backgroundColor: '#777' } : null">
       <router-link 
         :to="{name: 'HomeView'}" class="sidebar__link" 
         :style="isDarkMode ? { color: '#fff', 'border-bottom': '1px solid #333' } : null"
@@ -48,7 +48,7 @@ const { isDarkMode } = useDarkMode();
     &:hover {
       color: #222;
       /*background-color: #eee;*/
-      background-color: #ccc;
+      background-color: #bbb;
       &:first-child {
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;

@@ -15,7 +15,7 @@
             <button class="card__avatar-button btn btn_red" @click.prevent="deleteAvatar">Удалить</button>
           </div>
         </div>
-        <div class="card__background_footer">
+        <div class="card__background_footer" :style="isDarkMode ? { backgroundColor: '#4f4f55' } : null">
           <AppFormField name="name" v-model="activeUser.name" rules="required" class="card__name" />
         </div>
       </div>
@@ -44,10 +44,11 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { defineProps, reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
 import { useRouter } from 'vue-router';
+import useDarkMode from '@/composables/useDarkMode';
 
 const props = defineProps({
   user: {
@@ -61,6 +62,8 @@ const router = useRouter();
 const activeUser = reactive({ ...props.user });
 const avatar = ref(null);
 const avatarPreview = ref(null);
+
+const { isDarkMode } = useDarkMode();
 
 const { uploadAvatar } = useAuthStore();
 const { updateUser } = useForumStore();

@@ -103,7 +103,7 @@ function onClickOutside () {
 <style lang="scss" scoped>
 $burger-size: 35px;
 $dropdown-color: #fff;
-$dropdown-link-color: #444;
+$dropdown-link-color: #444 !important;
 $triangle-size: 8px;
 
 .header {
@@ -122,6 +122,9 @@ $triangle-size: 8px;
     font-size: 32px;
     font-weight: bold;
     color: #fff;
+    &:hover {
+      color: #fff;
+    }
   }
 
   &__menu {

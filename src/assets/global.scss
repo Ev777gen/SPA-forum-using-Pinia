@@ -14,9 +14,13 @@ body.dark-mode {
 
   & a,
   & .link {
-    color: #6ff0d4;
+    /*color: #6ff0d4;
     color: #6be2c8;
-    color: #58e2d7;
+    color: #58e2d7;*/
+    color: #08fffb;
+    color: #08ff18;
+    color: #00ff44;
+    color: #00ff00;
     transition: all ease 0.3s;
     &:hover {
       color: #98ffe9;
@@ -25,6 +29,14 @@ body.dark-mode {
 
   & .text_gray {
     color: #fff;
+  }
+
+  & .btn, 
+  & .btn_small {
+    color: #fff;
+    &:hover:not(:disabled) {
+      color: #fff;
+    }
   }
 
   & .btn_orange {
