@@ -3,7 +3,7 @@
     <div class="post"
       v-for="post in posts"
       :key="post.id"
-      :style="isDarkMode ? { backgroundColor: '#888' } : null"
+      :style="isDarkMode ? { backgroundColor: '#666' } : null"
     >
       <div v-if="getUserById(post.userId)" class="post__user-info">
         <router-link :to="{name: 'ProfileOfAnyUser', params: {userId: post.userId}}" class="post__user-name">
@@ -55,14 +55,14 @@
 
 <script setup>
 import PostEditor from '@/components/forum/PostEditor';
-import { ref } from 'vue';
+import { defineProps, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
 import { localeDate, userPostsCountWording, userThreadsCountWording } from '@/helpers';
 import useDarkMode from '@/composables/useDarkMode';
 
-const props = defineProps({
+defineProps({
   posts: {
     type: Array,
     required: true
@@ -74,7 +74,7 @@ const { isDarkMode } = useDarkMode();
 const editing = ref(null);
 
 const { authId } = storeToRefs(useAuthStore());
-const { users, user } = storeToRefs(useForumStore());
+const { user } = storeToRefs(useForumStore());
 const { updatePost } = useForumStore();
 
 function getUserById(userId) {
@@ -93,45 +93,6 @@ function handleUpdate(event) {
 function hidePostEditor() {
   editing.value = null;
 }
-
-/*
-export default {
-  //components: { PostEditor },
-  props: {
-    posts: {
-      type: Array,
-      required: true
-    }
-  },
-  data () {
-    return {
-      editing: null
-    }
-  },
-  computed: {
-    ...mapState(useAuthStore, ['authId']),
-    ...mapState(useForumStore, ['users', 'user']),
-  },
-  methods: {
-    ...mapActions(useForumStore, ['updatePost']),
-    localeDate,
-    userPostsCountWording,
-    userThreadsCountWording,
-    getUserById(userId) {
-      return this.user(userId);
-    },
-    toggleEditMode(id) {
-      this.editing = id === this.editing ? null : id;
-    },
-    handleUpdate(event) {
-      this.updatePost(event.post);
-      this.editing = null;
-    },
-    hidePostEditor() {
-      this.editing = null;
-    }
-  }
-}*/
 </script>
 
 <style lang="scss" scoped>

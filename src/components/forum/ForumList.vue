@@ -3,7 +3,7 @@
     <div 
       v-for="(forum, index) in forums" 
       :key="forum.id" 
-      :style="isDarkMode ? { backgroundColor: index % 2 === 0 ? '#777' : '#666' } : null"
+      :style="isDarkMode ? { backgroundColor: index % 2 === 0 ? '#666' : '#555' } : null"
       class="list__item forum" 
     >
       <div class="forum__details">
@@ -26,10 +26,11 @@
 </template>
 
 <script setup>
+import { defineProps } from "vue";
 import { forumThreadsCountWording } from '@/helpers';
 import useDarkMode from '@/composables/useDarkMode';
 
-const props = defineProps({
+defineProps({
   forums: {
     type: Array,
     required: true

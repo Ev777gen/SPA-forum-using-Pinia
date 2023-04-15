@@ -10,7 +10,7 @@
 <script setup>
 import UserProfileCard from "@/components/user/UserProfileCard.vue";
 import UserProfileCardEditor from "@/components/user/UserProfileCardEditor.vue";
-import { computed, watch } from 'vue';
+import { defineProps, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
@@ -72,9 +72,13 @@ $card-header-height: 320px;
 $card-background-cover-height: $card-header-height * 0.65;
 $card-background-footer-height: $card-header-height - $card-background-cover-height - 4px;
 
-$color-starting: #c4b7b2;
+/*$color-starting: #c4b7b2;
 $color-middle: #b8a9a3;
-$color-ending: #fff9f9;
+$color-ending: #fff9f9;*/
+
+$color-starting: #a18a82;
+$color-middle: #beaaa0;
+$color-ending: #f9f2f2;
 
 .card {
 

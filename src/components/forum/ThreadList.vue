@@ -4,7 +4,7 @@
     <div 
       v-for="(thread, index) in threads" 
       :key="thread.id" 
-      :style="isDarkMode ? { backgroundColor: index % 2 === 0 ? '#777' : '#666' } : null"
+      :style="isDarkMode ? { backgroundColor: index % 2 === 0 ? '#666' : '#555' } : null"
       class="list__item thread" 
     >
       <div>
@@ -37,12 +37,13 @@
 </template>
 
 <script setup>
+import { defineProps } from "vue";
 import { storeToRefs } from 'pinia';
 import { useForumStore } from '@/stores/ForumStore';
 import { localeDate, findItemById, repliesCountWording } from '@/helpers';
 import useDarkMode from '@/composables/useDarkMode';
 
-const props = defineProps({
+defineProps({
   threads: {
     type: Array,
     required: true
@@ -51,11 +52,7 @@ const props = defineProps({
 
 const { isDarkMode } = useDarkMode();
 
-const { posts, users } = storeToRefs(useForumStore());
-
-function postById (postId) {
-  return findItemById(posts.value, postId);
-}
+const { users } = storeToRefs(useForumStore());
 
 function userById (userId) {
   return findItemById(users.value, userId) || {};

@@ -16,23 +16,26 @@ body.dark-mode {
   & .link {
     /*color: #6ff0d4;
     color: #6be2c8;
-    color: #58e2d7;*/
+    color: #58e2d7;
     color: #08fffb;
     color: #08ff18;
-    color: #00ff44;
+    color: #00ff44;*/
     color: #00ff00;
     transition: all ease 0.3s;
     &:hover {
-      color: #98ffe9;
+      /*color: #98ffe9;*/
+      color: #86ff86;
     }
   }
 
-  & .text_gray {
-    color: #fff;
+  & .text_gray,
+    .form__label,
+    .fa-pencil {
+    color: #bbb;
   }
 
   & .btn, 
-  & .btn_small {
+    .btn_small {
     color: #fff;
     &:hover:not(:disabled) {
       color: #fff;
@@ -44,6 +47,11 @@ body.dark-mode {
     &:hover:not(:disabled) {
       background: #df8740;
     }
+  }
+
+  & input,
+    textarea {
+    background-color: #eee;
   }
 }
 
