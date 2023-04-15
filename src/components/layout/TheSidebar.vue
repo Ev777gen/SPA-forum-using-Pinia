@@ -3,13 +3,13 @@
     <nav class="sidebar__nav" :style="isDarkMode ? { backgroundColor: '#777' } : null">
       <router-link 
         :to="{name: 'HomeView'}" class="sidebar__link" 
-        :style="isDarkMode ? { color: '#fff', 'border-bottom': '1px solid #333' } : null"
+        :style="isDarkMode ? { color: '#fff', 'border-bottom': '1px solid #666' } : null"
       >
         На главную
       </router-link>
       <router-link 
         :to="{name: 'ForumMainPage'}" class="sidebar__link"
-        :style="isDarkMode ? { color: '#fff', 'border-bottom': '1px solid #333' } : null"
+        :style="isDarkMode ? { color: '#fff', 'border-bottom': '1px solid #666' } : null"
       >
         Форум
       </router-link>

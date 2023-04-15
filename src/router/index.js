@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useAuthStore } from '../stores/AuthStore';
-import { useForumStore } from '../stores/ForumStore';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useForumStore } from '@/stores/ForumStore';
 import { findItemById } from '@/helpers';
 
 const routes = [
@@ -131,10 +131,10 @@ router.beforeEach(async (to) => {
   await initAuthentication();
   unsubscribeAllSnapshots();
 
-  if (to.meta.isAuthRequired && !authId) {
+  if (to.meta.isAuthRequired && !authId.value) {
     return { name: 'SignIn', query: { redirectTo: to.path } };
   }
-  if (to.meta.isForGuests && authId) {
+  if (to.meta.isForGuests && authId.value) {
     return { name: 'HomeView' };
   }
 });

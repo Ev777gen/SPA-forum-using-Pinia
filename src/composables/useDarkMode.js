@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue';
 
-const isDarkMode = ref(getIsDarkModeBooleanFromLocalStorage() || false);
+const isDarkMode = ref(convertStringToBoolean(localStorage.getItem('isDarkMode')) || false);
 
 const toggleDarkMode = () => {
   isDarkMode.value = !isDarkMode.value;
@@ -21,15 +21,13 @@ if (isDarkMode.value === true && !document.body.classList.contains('dark-mode'))
 }
 
 // Читаем строку из LocalStorage и преобразуем ее в boolean
-function getIsDarkModeBooleanFromLocalStorage() {
-  let isDarkModeBoolean;
-  const isDarkModeString = localStorage.getItem('isDarkMode');
-  if (isDarkModeString === 'true') {
-    isDarkModeBoolean = true;
-  } else if (isDarkModeString === 'false') {
-    isDarkModeBoolean = false;
+function convertStringToBoolean(str) {
+  if (str === 'true') {
+    return true;
+  } else if (str === 'false') {
+    return false;
   }
-  return isDarkModeBoolean;
+  return;
 }
 
 export default function useDarkMode() {
