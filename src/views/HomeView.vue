@@ -25,6 +25,7 @@
       <ol class="homepage__list">
         <li><a href="https://github.com/Ev777gen/SPA" target="_blank">Исходный код</a> (Vue.js 3 Optios API + Vuex);</li>
         <li><a href="https://github.com/Ev777gen/SPA-forum-using-Pinia" target="_blank">Исходный код</a> (Vue.js 3 Composition API + Pinia).</li>
+        <li><a href="https://github.com/Ev777gen/SPA-forum-with-Nuxt" target="_blank">Исходный код</a> (Nuxt 3).</li>
       </ol>
     </div>
     <div class="homepage__text">
