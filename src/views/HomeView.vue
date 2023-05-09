@@ -1,7 +1,7 @@
 <template>
   <div class="homepage">
     <h1 class="homepage__title title">Single Page Application</h1>
-    <h2 class="homepage__subtitle subtitle">Форум на Vue 3 и Firebase</h2>
+    <h2 class="homepage__subtitle subtitle">Форум на Vue.js 3 и Firebase</h2>
     <div class="homepage__text">
       <p>
         Привет! Это пример реализации SPA в виде 
@@ -23,9 +23,27 @@
     <div class="homepage__text">
       На GitHub можно посмотреть разные варианты исходного кода:
       <ol class="homepage__list">
-        <li><a href="https://github.com/Ev777gen/SPA" target="_blank">Исходный код</a> (Vue.js 3 Optios API + Vuex);</li>
-        <li><a href="https://github.com/Ev777gen/SPA-forum-using-Pinia" target="_blank">Исходный код</a> (Vue.js 3 Composition API + Pinia).</li>
-        <li><a href="https://github.com/Ev777gen/SPA-forum-with-Nuxt" target="_blank">Исходный код</a> (Nuxt 3).</li>
+        <li>
+          <a href="https://github.com/Ev777gen/SPA" target="_blank">
+            Исходный код
+            <font-awesome-icon icon="fa-solid fa-arrow-up-right-from-square" class="font-awesome-icon" />
+          </a>
+          (Vue 3 Optios API + Vuex);
+          </li>
+        <li>
+          <a href="https://github.com/Ev777gen/SPA-forum-using-Pinia" target="_blank">
+            Исходный код
+            <font-awesome-icon icon="fa-solid fa-arrow-up-right-from-square" class="font-awesome-icon" />
+          </a>
+          (Vue 3 Composition API + Pinia).
+        </li>
+        <li>
+          <a href="https://github.com/Ev777gen/SPA-forum-with-Nuxt" target="_blank">
+            Исходный код
+            <font-awesome-icon icon="fa-solid fa-arrow-up-right-from-square" class="font-awesome-icon" />
+          </a>
+          (Nuxt 3 + TypeScript).
+        </li>
       </ol>
     </div>
     <div class="homepage__text">
@@ -93,5 +111,9 @@ async function logInToCheckOutThisSite() {
       margin-left: 45px;
     }
   }
+}
+
+.font-awesome-icon {
+  font-size: 12px;
 }
 </style>
