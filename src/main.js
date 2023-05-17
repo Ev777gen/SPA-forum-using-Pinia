@@ -13,10 +13,6 @@ import { getStorage } from 'firebase/storage';
 import FontAwesome from "@/plugins/FontAwesome";
 import VPagination from '@/plugins/VPagination';
 import VeeValidatePlugin from '@/plugins/VeeValidatePlugin';
-// Importing global components
-import AppAvatar from '@/components/ui/AppAvatar';
-import AppFormField from '@/components/ui/AppFormField';
-import AppSpinner from '@/components/ui/AppSpinner';
 
 // Initializing Firebase
 const firebaseConfig = {
@@ -45,23 +41,16 @@ const app = createApp(App)
   .use(VeeValidatePlugin)
 
 // Базовые компоненты: делаем глобальными компоненты, начинающиеся на App...
-// const requireComponent = require.context("@/components/ui", true, /App[A-Z]\w+\.(vue|js)$/)
-// requireComponent.keys().forEach(function (fileName) {
-//   let baseComponentConfig = requireComponent(fileName)
-//   baseComponentConfig = baseComponentConfig.default || baseComponentConfig
-//   const baseComponentName = baseComponentConfig.name || (
-//     fileName
-//       .replace(/^.+\//, '')
-//       .replace(/\.\w+$/, '')
-//   )
-//   app.component(baseComponentName, baseComponentConfig)
-// });
-
-// Чтобы избежать ошибки "TypeError: require.context is not a function",
-// которая возникает при тестировании с @vue/test-utils,
-// я временно заменил автоматическую регистрацию глобальных компонентов на ручную.
-app.component('AppAvatar', AppAvatar);
-app.component('AppFormField', AppFormField);
-app.component('AppSpinner', AppSpinner);
+const requireComponent = require.context("@/components/ui", true, /App[A-Z]\w+\.(vue|js)$/)
+requireComponent.keys().forEach(function (fileName) {
+  let baseComponentConfig = requireComponent(fileName)
+  baseComponentConfig = baseComponentConfig.default || baseComponentConfig
+  const baseComponentName = baseComponentConfig.name || (
+    fileName
+      .replace(/^.+\//, '')
+      .replace(/\.\w+$/, '')
+  )
+  app.component(baseComponentName, baseComponentConfig)
+});
 
 app.mount('#app');
