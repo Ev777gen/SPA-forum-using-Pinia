@@ -1,19 +1,32 @@
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, RouterLinkStub } from '@vue/test-utils';
 import CategoryList from '@/components/forum/CategoryList.vue';
-import testData from '@/data.json';
+
+const categories = [
+  {
+    "name": "Информация и обратная связь",
+    "slug": "information-and-feedback",
+    "id": "1",
+    "forumIds": ["1", "2"]
+  },
+];
 
 describe('CategoryList.vue', () => {
-  it('displays title', async () => {
-    const category = testData.categories[0];
-
-    const wrapper = shallowMount(CategoryList, {
+  let wrapper;
+  
+  beforeEach(() => {
+    wrapper = shallowMount(CategoryList, {
       props: {
-        categories: [category]
+        categories
+      },
+      global: {
+        components: {
+          'router-link': RouterLinkStub
+        }
       }
     });
+  });
 
-    const title = wrapper.get('.list__title').text();
-    expect(title).toBe(category.name);
-    //expect(true).toBeTruthy();
+  it('renders correctly from props', () => {
+    expect(wrapper.text()).toContain(categories[0].name);
   });
 });

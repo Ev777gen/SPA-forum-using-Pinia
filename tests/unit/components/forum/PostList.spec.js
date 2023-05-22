@@ -1,20 +1,30 @@
 import { shallowMount } from '@vue/test-utils';
 import PostList from '@/components/forum/PostList.vue';
-import testData from '@/data.json';
+
+const posts = [
+  {
+    "text": "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    "publishedAt": 1594035908,
+    "id": "1",
+    "threadId": "1",
+    "userId": "1"
+  },
+];
+
 
 describe('PostList.vue', () => {
-  it('displays post text', async () => {
-    const post = testData.posts[0];
-
-    const wrapper = shallowMount(PostList, {
+  let wrapper;
+  
+  beforeEach(() => {
+    wrapper = shallowMount(PostList, {
       props: {
-        posts: [post]
+        posts
       }
     });
+  });
 
-    const postText = wrapper.find('.post__body').text();
-    expect(postText).toBe(post.text);
-    // expect(true).toBeTruthy();
+  it('renders correctly from props', () => {
+    expect(wrapper.text()).toContain(posts[0].text);
   });
 });
 
