@@ -16,6 +16,7 @@
           @click.prevent="isDropdownOpen = !isDropdownOpen"
           v-click-outside="onClickOutside"
           class="header__user-avatar"
+          data-test="avatar"
         >
           <AppAvatar class="header__avatar avatar_small" :src="authUser?.avatar" :alt="`${authUser.name} profile image`"/>
           <font-awesome-icon icon="fa-solid fa-angle-down" class="header__arrow" :class="{'header__arrow_up': isDropdownOpen}" />
@@ -26,15 +27,16 @@
           @click="isDropdownOpen = !isDropdownOpen"
           v-click-outside="onClickOutside"
           class="burger"
+          data-test="burger"
         >
           <div class="burger__top-bar"></div>
           <div class="burger__middle-bar"></div>
           <div class="burger__bottom-bar"></div>
         </div>
 
-        <div v-else class="header__not-auth-user">
+        <div v-else class="header__not-auth-user" data-test="not-logged-in">
           <router-link :to="{name: 'RegisterForm'}" class="header__link">Зарегистрироваться</router-link>
-          <router-link :to="{name: 'SignIn'}" class="header__link">
+          <router-link :to="{name: 'SignIn'}" class="header__link" data-test="log-in-button">
             <font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Войти
           </router-link>
         </div>
