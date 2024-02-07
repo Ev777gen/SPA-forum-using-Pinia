@@ -46,7 +46,7 @@
         </li>
       </ol>
     </div>
-    <div class="homepage__text">
+    <!-- <div class="homepage__text">
       Чтобы осмотреться вокруг, можно 
       <router-link :to="{name: 'RegisterForm'}" class="homepage__link">
         зарегистрироваться
@@ -55,30 +55,30 @@
       <button class="btn btn_green" @click.prevent="logInToCheckOutThisSite" :disabled="authUser">
         войти в аккаунт существующего пользователя
       </button>
-    </div>
+    </div> -->
 
   </div>
 </template>
 
 <script setup>
-import { storeToRefs } from 'pinia';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useForumStore } from '@/stores/ForumStore';
+// import { storeToRefs } from 'pinia';
+// import { useAuthStore } from '@/stores/AuthStore';
+// import { useForumStore } from '@/stores/ForumStore';
 
-const { authUser } = storeToRefs(useAuthStore());
-const { signInWithEmailAndPassword } = useAuthStore();
-const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useForumStore();
+// const { authUser } = storeToRefs(useAuthStore());
+// const { signInWithEmailAndPassword } = useAuthStore();
+// const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useForumStore();
 
-async function logInToCheckOutThisSite() {
-  try {
-    startLoadingIndicator();
-    const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
-    await signInWithEmailAndPassword({ email: defaultUser.email, password: '123456' });
-    stopLoadingIndicator();
-  } catch (error) {
-    alert(error.message);
-  }
-}
+// async function logInToCheckOutThisSite() {
+//   try {
+//     startLoadingIndicator();
+//     const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
+//     await signInWithEmailAndPassword({ email: defaultUser.email, password: '123456' });
+//     stopLoadingIndicator();
+//   } catch (error) {
+//     alert(error.message);
+//   }
+// }
 </script>
 
 <style lang="scss" scoped>
